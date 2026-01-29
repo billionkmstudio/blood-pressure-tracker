@@ -1,47 +1,47 @@
+<!DOCTYPE html>
 <html lang="zh-TW">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>血壓紀錄追蹤器 - 雲端版</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                padding: 20px;
-            }
-            
-            .container {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-            
-            .auth-container {
-                max-width: 450px;
-                margin: 100px auto;
-                background: white;
-                padding: 40px;
-                border-radius: 15px;
-                box-shadow: 0 10px 50px rgba(0,0,0,0.3);
-            }
-            h1 {
-                text-align: center;
-                color: white;
-                margin-bottom: 30px;
-                
-                font-size: 2.5em;
-                <!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>血壓紀錄追蹤器 - 雲端版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .auth-container {
+            max-width: 450px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .auth-container h2 {
-            color: #667eea;
+            color: #ff6b6b;
             margin-bottom: 30px;
             text-align: center;
         }
@@ -55,10 +55,10 @@
         }
 
         h2 {
-            color: #667eea;
+            color: #ff6b6b;
             margin-bottom: 20px;
             font-size: 1.5em;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #ff6b6b;
             padding-bottom: 10px;
         }
 
@@ -78,7 +78,8 @@
         input[type="number"],
         input[type="text"],
         input[type="email"],
-        input[type="password"] {
+        input[type="password"],
+        select {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
@@ -87,9 +88,10 @@
             transition: border-color 0.3s;
         }
 
-        input:focus {
+        input:focus,
+        select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #ff6b6b;
         }
 
         .form-row {
@@ -98,8 +100,50 @@
             gap: 15px;
         }
 
+        .gender-options {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .gender-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .gender-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .gender-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .gender-option input[type="radio"]:checked + .gender-label {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .gender-label:hover {
+            border-color: #ff6b6b;
+            background: #fffafa;
+        }
+
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
             color: white;
             padding: 15px 30px;
             border: none;
@@ -113,7 +157,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
         }
 
         .btn:active {
@@ -121,7 +165,7 @@
         }
 
         .btn-secondary {
-            background: #6b7280;
+            background: #48dbfb;
             margin-top: 10px;
         }
 
@@ -143,13 +187,13 @@
         }
 
         .records-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
             color: white;
             font-weight: 600;
         }
 
         .records-table tr:hover {
-            background: #f5f5f5;
+            background: #fffafa;
         }
 
         .status-indicator {
@@ -197,7 +241,7 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
             color: white;
             padding: 20px;
             border-radius: 10px;
@@ -264,13 +308,14 @@
         }
 
         .person-card {
-            background: #f8f9fa;
+            background: #fffafa;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 2px solid #fee;
         }
 
         .person-info {
@@ -284,13 +329,32 @@
             margin-bottom: 5px;
         }
 
-        .person-birthdate {
+        .person-details {
             color: #666;
             font-size: 0.9em;
         }
 
+        .person-gender {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .gender-male {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .gender-female {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
         .person-age {
-            color: #667eea;
+            color: #ff6b6b;
             font-weight: 600;
             margin-left: 10px;
         }
@@ -303,9 +367,9 @@
 
         .person-btn {
             padding: 15px 25px;
-            border: 2px solid #667eea;
+            border: 2px solid #ff6b6b;
             background: white;
-            color: #667eea;
+            color: #ff6b6b;
             border-radius: 10px;
             cursor: pointer;
             font-size: 16px;
@@ -314,16 +378,17 @@
         }
 
         .person-btn:hover {
-            background: #f0f4ff;
+            background: #fff5f5;
         }
 
         .person-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
             color: white;
+            border-color: #ff6b6b;
         }
 
         .current-person-info {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
             color: white;
             padding: 15px;
             border-radius: 10px;
@@ -341,6 +406,76 @@
             opacity: 0.9;
         }
 
+        .user-info {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff6b6b;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .auth-toggle a {
+            color: #ff6b6b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #fcc;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #060;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #cfc;
+        }
+
+        #app-content {
+            display: none;
+        }
+
         .report-preview {
             background: white;
             padding: 40px;
@@ -352,12 +487,12 @@
         .report-header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #ff6b6b;
             padding-bottom: 20px;
         }
 
         .report-header h2 {
-            color: #667eea;
+            color: #ff6b6b;
             margin-bottom: 10px;
             border: none;
             padding: 0;
@@ -373,23 +508,24 @@
 
         .report-info div {
             padding: 8px;
-            background: #f8f9fa;
+            background: #fffafa;
             border-radius: 5px;
         }
 
         .report-info strong {
-            color: #667eea;
+            color: #ff6b6b;
         }
 
         .report-summary {
-            background: #f0f4ff;
+            background: #fff9f0;
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 30px;
+            border: 2px solid #feca57;
         }
 
         .report-summary h3 {
-            color: #667eea;
+            color: #ff6b6b;
             margin-bottom: 15px;
         }
 
@@ -409,7 +545,7 @@
         .report-summary-value {
             font-size: 1.8em;
             font-weight: bold;
-            color: #667eea;
+            color: #ff6b6b;
         }
 
         .report-summary-label {
@@ -433,13 +569,13 @@
         }
 
         .report-table th {
-            background: #667eea;
+            background: #ff6b6b;
             color: white;
             font-weight: 600;
         }
 
         .report-table tr:nth-child(even) {
-            background: #f8f9fa;
+            background: #fffafa;
         }
 
         .report-footer {
@@ -479,76 +615,6 @@
             }
         }
 
-        .user-info {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: white;
-            font-size: 1.2em;
-        }
-
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .auth-toggle {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-
-        .auth-toggle a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .auth-toggle a:hover {
-            text-decoration: underline;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c00;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #fcc;
-        }
-
-        .success-message {
-            background: #efe;
-            color: #060;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #cfc;
-        }
-
-        #app-content {
-            display: none;
-        }
-
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.8em;
@@ -565,6 +631,10 @@
             .records-table th,
             .records-table td {
                 padding: 8px;
+            }
+
+            .gender-options {
+                flex-direction: column;
             }
         }
     </style>
@@ -640,7 +710,7 @@
                 <h2>👤 人員管理</h2>
                 <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
                     <button class="btn" style="flex: 0 0 auto; width: auto; padding: 10px 20px;" onclick="showAddPersonModal()">➕ 新增人員</button>
-                    <button class="btn" style="flex: 0 0 auto; width: auto; padding: 10px 20px; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);" onclick="showManagePeopleModal()">✏️ 管理人員</button>
+                    <button class="btn btn-secondary" style="flex: 0 0 auto; width: auto; padding: 10px 20px;" onclick="showManagePeopleModal()">✏️ 管理人員</button>
                 </div>
                 <div id="peopleSelector"></div>
             </div>
@@ -678,6 +748,34 @@
                 </form>
             </div>
 
+            <!-- 報表生成 -->
+            <div class="card">
+                <h2>📄 生成醫療報表</h2>
+                <p style="color: #666; margin-bottom: 15px;">💡 選擇日期範圍，生成適合給醫生參考的血壓記錄報表</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reportStartDate">開始日期</label>
+                        <input type="date" id="reportStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="reportEndDate">結束日期</label>
+                        <input type="date" id="reportEndDate">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="generateReport()" style="flex: 1; min-width: 200px;">
+                        📊 預覽報表
+                    </button>
+                    <button class="btn btn-secondary" onclick="printReport()" style="flex: 1; min-width: 200px;">
+                        🖨️ 列印報表
+                    </button>
+                </div>
+
+                <div id="reportPreview" style="margin-top: 20px;"></div>
+            </div>
+
             <!-- 統計數據 -->
             <div class="card">
                 <h2>統計數據</h2>
@@ -703,37 +801,6 @@
                         <div class="stat-label">筆</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- 報表生成 -->
-            <div class="card">
-                <h2>📄 生成醫療報表</h2>
-                <p style="color: #666; margin-bottom: 15px;">💡 選擇日期範圍，生成適合給醫生參考的血壓記錄報表</p>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="reportStartDate">開始日期</label>
-                        <input type="date" id="reportStartDate">
-                    </div>
-                    <div class="form-group">
-                        <label for="reportEndDate">結束日期</label>
-                        <input type="date" id="reportEndDate">
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn" onclick="generateReport()" style="flex: 1; min-width: 200px;">
-                        📊 預覽報表
-                    </button>
-                    <button class="btn" onclick="printReport()" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                        🖨️ 列印報表
-                    </button>
-                    <button class="btn" onclick="exportToPDF()" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                        📥 下載 PDF
-                    </button>
-                </div>
-
-                <div id="reportPreview" style="margin-top: 20px;"></div>
             </div>
 
             <!-- 趨勢圖表 -->
@@ -764,6 +831,25 @@
                     <label for="personName">姓名 *</label>
                     <input type="text" id="personName" required placeholder="請輸入姓名">
                 </div>
+                
+                <div class="form-group">
+                    <label>性別 *</label>
+                    <div class="gender-options">
+                        <div class="gender-option">
+                            <input type="radio" id="gender-male" name="personGender" value="男" required>
+                            <label for="gender-male" class="gender-label">
+                                👨 男 Male
+                            </label>
+                        </div>
+                        <div class="gender-option">
+                            <input type="radio" id="gender-female" name="personGender" value="女" required>
+                            <label for="gender-female" class="gender-label">
+                                👩 女 Female
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="personBirthdate">出生日期 *</label>
                     <input type="date" id="personBirthdate" required>
@@ -997,10 +1083,11 @@
             
             people.forEach(person => {
                 const age = calculateAge(person.birthdate);
+                const genderIcon = person.gender === '男' ? '👨' : '👩';
                 const isActive = person.id === currentPersonId ? 'active' : '';
                 html += `
                     <button class="person-btn ${isActive}" onclick="selectPerson('${person.id}')">
-                        👤 ${person.name}<br>
+                        ${genderIcon} ${person.name}<br>
                         <small>(${age}歲)</small>
                     </button>
                 `;
@@ -1012,10 +1099,12 @@
                 const currentPerson = people.find(p => p.id === currentPersonId);
                 if (currentPerson) {
                     const age = calculateAge(currentPerson.birthdate);
+                    const genderIcon = currentPerson.gender === '男' ? '👨' : '👩';
+                    const genderText = currentPerson.gender === '男' ? 'Male' : 'Female';
                     html = `
                         <div class="current-person-info">
-                            <h3>👤 ${currentPerson.name}</h3>
-                            <p>出生日期: ${currentPerson.birthdate} (${age}歲)</p>
+                            <h3>${genderIcon} ${currentPerson.name}</h3>
+                            <p>性別: ${currentPerson.gender} ${genderText} | 出生日期: ${currentPerson.birthdate} (${age}歲)</p>
                         </div>
                     ` + html;
                 }
@@ -1071,6 +1160,9 @@
             let html = '';
             for (const person of people) {
                 const age = calculateAge(person.birthdate);
+                const genderIcon = person.gender === '男' ? '👨' : '👩';
+                const genderClass = person.gender === '男' ? 'gender-male' : 'gender-female';
+                const genderText = person.gender === '男' ? 'Male' : 'Female';
                 
                 // 計算記錄數
                 const recordCount = records.filter(r => r.personId === person.id).length;
@@ -1078,8 +1170,9 @@
                 html += `
                     <div class="person-card">
                         <div class="person-info">
-                            <div class="person-name">👤 ${person.name}</div>
-                            <div class="person-birthdate">
+                            <div class="person-name">${genderIcon} ${person.name}</div>
+                            <div class="person-details">
+                                <span class="person-gender ${genderClass}">${person.gender} ${genderText}</span>
                                 出生日期: ${person.birthdate} 
                                 <span class="person-age">(${age}歲)</span>
                             </div>
@@ -1103,6 +1196,7 @@
             const personData = {
                 userId: currentUser.uid,
                 name: document.getElementById('personName').value,
+                gender: document.querySelector('input[name="personGender"]:checked').value,
                 birthdate: document.getElementById('personBirthdate').value,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
@@ -1177,11 +1271,17 @@
         // 血壓記錄
         // ============================================
 
-        // 初始化日期時間
+        // 初始化日期時間和報表日期
         document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
             document.getElementById('date').valueAsDate = now;
             document.getElementById('time').value = now.toTimeString().slice(0, 5);
+            
+            // 初始化報表日期（預設最近30天）
+            const thirtyDaysAgo = new Date(now);
+            thirtyDaysAgo.setDate(now.getDate() - 30);
+            document.getElementById('reportEndDate').valueAsDate = now;
+            document.getElementById('reportStartDate').valueAsDate = thirtyDaysAgo;
         });
 
         document.getElementById('bpForm').addEventListener('submit', async (e) => {
@@ -1235,10 +1335,23 @@
             }
         });
 
-        function getBPStatus(systolic, diastolic) {
-            if (systolic < 120 && diastolic < 80) {
+        function getBPStatus(systolic, diastolic, age, gender) {
+            // 根據性別和年齡設定標準
+            let standard;
+            
+            if (gender === '男') {
+                if (age < 40) standard = { sys: 119, dia: 70 };
+                else if (age < 60) standard = { sys: 124, dia: 77 };
+                else standard = { sys: 133, dia: 82 };
+            } else {
+                if (age < 40) standard = { sys: 110, dia: 68 };
+                else if (age < 60) standard = { sys: 122, dia: 74 };
+                else standard = { sys: 139, dia: 84 };
+            }
+
+            if (systolic <= standard.sys && diastolic <= standard.dia) {
                 return { text: '正常', class: 'status-normal' };
-            } else if (systolic < 140 || diastolic < 90) {
+            } else if (systolic <= standard.sys + 10 && diastolic <= standard.dia + 10) {
                 return { text: '偏高', class: 'status-elevated' };
             } else {
                 return { text: '高血壓', class: 'status-high' };
@@ -1260,6 +1373,10 @@
                 return;
             }
 
+            const person = people.find(p => p.id === currentPersonId);
+            const age = person ? calculateAge(person.birthdate) : 0;
+            const gender = person ? person.gender : '男';
+
             let html = `
                 <table class="records-table">
                     <thead>
@@ -1277,7 +1394,7 @@
             `;
 
             personRecords.forEach(record => {
-                const status = getBPStatus(record.systolic, record.diastolic);
+                const status = getBPStatus(record.systolic, record.diastolic, age, gender);
                 html += `
                     <tr>
                         <td>${record.recordDate}</td>
@@ -1474,32 +1591,9 @@
             });
         }
 
-        // 點擊彈出視窗外部關閉
-        window.onclick = function(event) {
-            const addModal = document.getElementById('addPersonModal');
-            const manageModal = document.getElementById('managePeopleModal');
-            
-            if (event.target == addModal) {
-                closeAddPersonModal();
-            }
-            if (event.target == manageModal) {
-                closeManagePeopleModal();
-            }
-        }
-
         // ============================================
         // 報表生成功能
         // ============================================
-
-        // 初始化報表日期（預設最近30天）
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const thirtyDaysAgo = new Date(today);
-            thirtyDaysAgo.setDate(today.getDate() - 30);
-            
-            document.getElementById('reportEndDate').valueAsDate = today;
-            document.getElementById('reportStartDate').valueAsDate = thirtyDaysAgo;
-        });
 
         function generateReport() {
             if (!currentPersonId) {
@@ -1538,6 +1632,8 @@
             }
 
             // 計算統計數據
+            const age = calculateAge(person.birthdate);
+            const gender = person.gender;
             const avgSystolic = Math.round(filteredRecords.reduce((sum, r) => sum + r.systolic, 0) / filteredRecords.length);
             const avgDiastolic = Math.round(filteredRecords.reduce((sum, r) => sum + r.diastolic, 0) / filteredRecords.length);
             const avgPulse = Math.round(filteredRecords.reduce((sum, r) => sum + r.pulse, 0) / filteredRecords.length);
@@ -1546,6 +1642,9 @@
             const minSystolic = Math.min(...filteredRecords.map(r => r.systolic));
             const maxDiastolic = Math.max(...filteredRecords.map(r => r.diastolic));
             const minDiastolic = Math.min(...filteredRecords.map(r => r.diastolic));
+
+            const genderIcon = gender === '男' ? '👨' : '👩';
+            const genderText = gender === '男' ? 'Male' : 'Female';
 
             // 生成報表 HTML
             let reportHTML = `
@@ -1557,9 +1656,10 @@
 
                     <div class="report-info">
                         <div><strong>姓名 Name:</strong> ${person.name}</div>
-                        <div><strong>出生日期 DOB:</strong> ${person.birthdate} (${calculateAge(person.birthdate)}歲)</div>
+                        <div><strong>性別 Gender:</strong> ${genderIcon} ${gender} ${genderText}</div>
+                        <div><strong>出生日期 DOB:</strong> ${person.birthdate} (${age}歲)</div>
                         <div><strong>報告日期 Report Date:</strong> ${new Date().toLocaleDateString('zh-TW')}</div>
-                        <div><strong>記錄期間 Period:</strong> ${startDate} 至 ${endDate}</div>
+                        <div style="grid-column: 1 / -1;"><strong>記錄期間 Period:</strong> ${startDate} 至 ${endDate}</div>
                     </div>
 
                     <div class="report-summary">
@@ -1592,7 +1692,7 @@
                         </div>
                     </div>
 
-                    <h3 style="color: #667eea; margin-top: 30px; margin-bottom: 15px;">📋 詳細記錄 Detailed Records</h3>
+                    <h3 style="color: #ff6b6b; margin-top: 30px; margin-bottom: 15px;">📋 詳細記錄 Detailed Records</h3>
                     <table class="report-table">
                         <thead>
                             <tr>
@@ -1608,7 +1708,7 @@
             `;
 
             filteredRecords.forEach(record => {
-                const status = getBPStatus(record.systolic, record.diastolic);
+                const status = getBPStatus(record.systolic, record.diastolic, age, gender);
                 reportHTML += `
                     <tr>
                         <td>${record.recordDate}</td>
@@ -1627,8 +1727,8 @@
 
                     <div class="report-footer">
                         <p><strong>備註 Notes:</strong></p>
-                        <p>正常血壓：收縮壓 < 120 mmHg，舒張壓 < 80 mmHg</p>
-                        <p>Normal BP: Systolic < 120 mmHg, Diastolic < 80 mmHg</p>
+                        <p>血壓評估標準已根據性別（${gender}）和年齡（${age}歲）調整</p>
+                        <p>Blood pressure assessment adjusted for gender (${genderText}) and age (${age} years)</p>
                         <p style="margin-top: 20px;">本報告由血壓追蹤系統自動生成，僅供醫療參考</p>
                         <p>This report is automatically generated for medical reference only</p>
                     </div>
@@ -1652,77 +1752,18 @@
             window.print();
         }
 
-        async function exportToPDF() {
-            const reportContent = document.getElementById('printableReport');
+        // 點擊彈出視窗外部關閉
+        window.onclick = function(event) {
+            const addModal = document.getElementById('addPersonModal');
+            const manageModal = document.getElementById('managePeopleModal');
             
-            if (!reportContent) {
-                alert('⚠️ 請先點擊「預覽報表」生成報表！');
-                return;
+            if (event.target == addModal) {
+                closeAddPersonModal();
             }
-
-            // 使用 html2canvas 和 jsPDF 生成 PDF
-            // 需要加載這些庫
-            if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
-                alert('📥 正在載入 PDF 生成工具，請稍候再試...');
-                
-                // 動態載入庫
-                const script1 = document.createElement('script');
-                script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-                document.head.appendChild(script1);
-                
-                const script2 = document.createElement('script');
-                script2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-                document.head.appendChild(script2);
-                
-                return;
+            if (event.target == manageModal) {
+                closeManagePeopleModal();
             }
-
-            try {
-                // 生成 PDF
-                const canvas = await html2canvas(reportContent, {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false
-                });
-
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                
-                const imgWidth = 210; // A4 寬度
-                const pageHeight = 297; // A4 高度
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-
-                const person = people.find(p => p.id === currentPersonId);
-                const startDate = document.getElementById('reportStartDate').value;
-                const endDate = document.getElementById('reportEndDate').value;
-                const filename = `血壓報告_${person.name}_${startDate}_${endDate}.pdf`;
-                
-                pdf.save(filename);
-                
-                alert('✅ PDF 已成功下載！');
-            } catch (error) {
-                console.error('PDF 生成錯誤:', error);
-                alert('❌ PDF 生成失敗，請嘗試使用「列印」功能，然後選擇「另存為 PDF」');
-            }
-
         }
     </script>
-
-    <!-- 動態載入 PDF 生成庫 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
