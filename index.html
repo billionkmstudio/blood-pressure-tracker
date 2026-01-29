@@ -1,0 +1,1728 @@
+<html lang="zh-TW">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>血壓紀錄追蹤器 - 雲端版</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            
+            .auth-container {
+                max-width: 450px;
+                margin: 100px auto;
+                background: white;
+                padding: 40px;
+                border-radius: 15px;
+                box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            }
+            h1 {
+                text-align: center;
+                color: white;
+                margin-bottom: 30px;
+                
+                font-size: 2.5em;
+                <!DOCTYPE html>
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .auth-container h2 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            margin-top: 10px;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .records-table th,
+        .records-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .records-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .records-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-normal {
+            background: #4ade80;
+            color: white;
+        }
+
+        .status-elevated {
+            background: #fbbf24;
+            color: white;
+        }
+
+        .status-high {
+            background: #f87171;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .person-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .person-info {
+            flex: 1;
+        }
+
+        .person-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .person-birthdate {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .person-age {
+            color: #667eea;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .person-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .person-btn {
+            padding: 15px 25px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .person-btn:hover {
+            background: #f0f4ff;
+        }
+
+        .person-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .current-person-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .current-person-info h3 {
+            margin: 0;
+            font-size: 1.3em;
+        }
+
+        .current-person-info p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .report-preview {
+            background: white;
+            padding: 40px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .report-header h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            border: none;
+            padding: 0;
+        }
+
+        .report-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .report-info div {
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .report-info strong {
+            color: #667eea;
+        }
+
+        .report-summary {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .report-summary h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .report-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .report-summary-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .report-summary-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .report-summary-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .report-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .report-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .report-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .card:not(.report-preview) {
+                display: none;
+            }
+
+            .btn {
+                display: none;
+            }
+
+            .report-preview {
+                border: none;
+                box-shadow: none;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            h1 {
+                display: none;
+            }
+        }
+
+        .user-info {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .auth-toggle a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #fcc;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #060;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #cfc;
+        }
+
+        #app-content {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .records-table {
+                font-size: 14px;
+            }
+
+            .records-table th,
+            .records-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 載入中畫面 -->
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>正在載入...</p>
+    </div>
+
+    <!-- 登入/註冊介面 -->
+    <div id="auth-container" class="auth-container" style="display: none;">
+        <h2>🩺 血壓紀錄追蹤器</h2>
+        
+        <div id="auth-error" style="display: none;" class="error-message"></div>
+        
+        <!-- 登入表單 -->
+        <form id="login-form">
+            <div class="form-group">
+                <label for="login-email">電子郵件</label>
+                <input type="email" id="login-email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="login-password">密碼</label>
+                <input type="password" id="login-password" required placeholder="至少 6 個字元">
+            </div>
+            <button type="submit" class="btn">🔐 登入</button>
+        </form>
+
+        <div class="auth-toggle">
+            還沒有帳號？<a href="#" id="show-register">立即註冊</a>
+        </div>
+
+        <!-- 註冊表單 -->
+        <form id="register-form" style="display: none;">
+            <div class="form-group">
+                <label for="register-email">電子郵件</label>
+                <input type="email" id="register-email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="register-password">密碼</label>
+                <input type="password" id="register-password" required placeholder="至少 6 個字元">
+            </div>
+            <div class="form-group">
+                <label for="register-password-confirm">確認密碼</label>
+                <input type="password" id="register-password-confirm" required placeholder="再次輸入密碼">
+            </div>
+            <button type="submit" class="btn">✅ 註冊</button>
+        </form>
+
+        <div class="auth-toggle" id="show-login-link" style="display: none;">
+            已有帳號？<a href="#" id="show-login">返回登入</a>
+        </div>
+    </div>
+
+    <!-- 主應用程式介面 -->
+    <div id="app-content">
+        <div class="container">
+            <h1>🩺 血壓紀錄追蹤器</h1>
+
+            <!-- 用戶資訊 -->
+            <div class="user-info">
+                <div>
+                    <strong>👤 登入帳號：</strong>
+                    <span id="user-email"></span>
+                </div>
+                <button class="btn btn-danger" onclick="logout()" style="width: auto; padding: 10px 20px;">🚪 登出</button>
+            </div>
+
+            <!-- 人員管理 -->
+            <div class="card">
+                <h2>👤 人員管理</h2>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button class="btn" style="flex: 0 0 auto; width: auto; padding: 10px 20px;" onclick="showAddPersonModal()">➕ 新增人員</button>
+                    <button class="btn" style="flex: 0 0 auto; width: auto; padding: 10px 20px; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);" onclick="showManagePeopleModal()">✏️ 管理人員</button>
+                </div>
+                <div id="peopleSelector"></div>
+            </div>
+
+            <!-- 輸入表單 -->
+            <div class="card">
+                <h2>新增血壓紀錄</h2>
+                <p style="color: #666; margin-bottom: 15px;">💡 您可以手動輸入任何日期和時間的血壓記錄，支援每天多次量度</p>
+                <form id="bpForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">日期 *</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">時間 *</label>
+                            <input type="time" id="time" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="systolic">收縮壓 (SYS) mmHg *</label>
+                            <input type="number" id="systolic" min="50" max="250" placeholder="例如: 151" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="diastolic">舒張壓 (DIA) mmHg *</label>
+                            <input type="number" id="diastolic" min="30" max="150" placeholder="例如: 75" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pulse">脈搏 (PUL) /分鐘 *</label>
+                            <input type="number" id="pulse" min="40" max="200" placeholder="例如: 74" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">💾 儲存紀錄</button>
+                </form>
+            </div>
+
+            <!-- 統計數據 -->
+            <div class="card">
+                <h2>統計數據</h2>
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-label">平均收縮壓</div>
+                        <div class="stat-value" id="avgSystolic">--</div>
+                        <div class="stat-label">mmHg</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">平均舒張壓</div>
+                        <div class="stat-value" id="avgDiastolic">--</div>
+                        <div class="stat-label">mmHg</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">平均脈搏</div>
+                        <div class="stat-value" id="avgPulse">--</div>
+                        <div class="stat-label">/分鐘</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">總紀錄數</div>
+                        <div class="stat-value" id="totalRecords">0</div>
+                        <div class="stat-label">筆</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 報表生成 -->
+            <div class="card">
+                <h2>📄 生成醫療報表</h2>
+                <p style="color: #666; margin-bottom: 15px;">💡 選擇日期範圍，生成適合給醫生參考的血壓記錄報表</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reportStartDate">開始日期</label>
+                        <input type="date" id="reportStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="reportEndDate">結束日期</label>
+                        <input type="date" id="reportEndDate">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="generateReport()" style="flex: 1; min-width: 200px;">
+                        📊 預覽報表
+                    </button>
+                    <button class="btn" onclick="printReport()" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        🖨️ 列印報表
+                    </button>
+                    <button class="btn" onclick="exportToPDF()" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        📥 下載 PDF
+                    </button>
+                </div>
+
+                <div id="reportPreview" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- 趨勢圖表 -->
+            <div class="card">
+                <h2>血壓趨勢圖（每日平均值）</h2>
+                <p style="color: #666; margin-bottom: 10px;">📊 當天有多筆記錄時，將自動計算平均值顯示在圖表中</p>
+                <div class="chart-container">
+                    <canvas id="bpChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 紀錄列表 -->
+            <div class="card">
+                <h2>歷史紀錄（詳細記錄）</h2>
+                <p style="color: #666; margin-bottom: 10px;">📝 顯示所有量度記錄，包括同一天的多次測量</p>
+                <div id="recordsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增人員彈出視窗 -->
+    <div id="addPersonModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddPersonModal()">&times;</span>
+            <h2>➕ 新增人員</h2>
+            <form id="addPersonForm">
+                <div class="form-group">
+                    <label for="personName">姓名 *</label>
+                    <input type="text" id="personName" required placeholder="請輸入姓名">
+                </div>
+                <div class="form-group">
+                    <label for="personBirthdate">出生日期 *</label>
+                    <input type="date" id="personBirthdate" required>
+                </div>
+                <button type="submit" class="btn">✅ 確定新增</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 管理人員彈出視窗 -->
+    <div id="managePeopleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeManagePeopleModal()">&times;</span>
+            <h2>✏️ 管理人員</h2>
+            <div id="peopleList"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // ============================================
+        // Firebase 配置 - 請替換為您的配置資訊
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyADR2izYInbRppU2iG0lfRqJSBbB0eRwdg",
+            authDomain: "blood-pressure-tracker-b6d00.firebaseapp.com",
+            projectId: "blood-pressure-tracker-b6d00",
+             storageBucket: "blood-pressure-tracker-b6d00.firebasestorage.app",
+             messagingSenderId: "662293506727",
+             appId: "1:662293506727:web:e8aa5980d076ddb5ff0982"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // 全域變數
+        let currentUser = null;
+        let currentPersonId = null;
+        let people = [];
+        let records = [];
+        let chart = null;
+
+        // ============================================
+        // 認證相關函數
+        // ============================================
+
+        // 監聽認證狀態
+        auth.onAuthStateChanged(user => {
+            document.getElementById('loading').style.display = 'none';
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('app-content').style.display = 'block';
+                document.getElementById('user-email').textContent = user.email;
+                
+                // 載入用戶數據
+                loadUserData();
+            } else {
+                currentUser = null;
+                document.getElementById('auth-container').style.display = 'block';
+                document.getElementById('app-content').style.display = 'none';
+            }
+        });
+
+        // 顯示錯誤訊息
+        function showAuthError(message) {
+            const errorDiv = document.getElementById('auth-error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // 登入表單
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                console.error('登入錯誤:', error);
+                showAuthError(getErrorMessage(error.code));
+            }
+        });
+
+        // 註冊表單
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-password-confirm').value;
+
+            if (password !== confirmPassword) {
+                showAuthError('兩次輸入的密碼不一致！');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAuthError('密碼至少需要 6 個字元！');
+                return;
+            }
+
+            try {
+                await auth.createUserWithEmailAndPassword(email, password);
+                alert('✅ 註冊成功！歡迎使用血壓紀錄追蹤器');
+            } catch (error) {
+                console.error('註冊錯誤:', error);
+                showAuthError(getErrorMessage(error.code));
+            }
+        });
+
+        // 切換登入/註冊表單
+        document.getElementById('show-register').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+            document.querySelector('.auth-toggle').style.display = 'none';
+            document.getElementById('show-login-link').style.display = 'block';
+        });
+
+        document.getElementById('show-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+            document.querySelector('.auth-toggle').style.display = 'block';
+            document.getElementById('show-login-link').style.display = 'none';
+        });
+
+        // 登出
+        function logout() {
+            if (confirm('確定要登出嗎？')) {
+                auth.signOut();
+            }
+        }
+
+        // 錯誤訊息翻譯
+        function getErrorMessage(errorCode) {
+            const messages = {
+                'auth/user-not-found': '此帳號不存在',
+                'auth/wrong-password': '密碼錯誤',
+                'auth/email-already-in-use': '此電子郵件已被註冊',
+                'auth/invalid-email': '電子郵件格式不正確',
+                'auth/weak-password': '密碼強度太弱',
+                'auth/too-many-requests': '嘗試次數過多，請稍後再試',
+                'auth/network-request-failed': '網路連線失敗'
+            };
+            return messages[errorCode] || '發生錯誤，請稍後再試';
+        }
+
+        // ============================================
+        // 數據載入
+        // ============================================
+
+        async function loadUserData() {
+            try {
+                // 載入人員資料
+                const peopleSnapshot = await db.collection('people')
+                    .where('userId', '==', currentUser.uid)
+                    .get();
+                
+                people = peopleSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                // 如果有人員，選擇第一個
+                if (people.length > 0 && !currentPersonId) {
+                    currentPersonId = people[0].id;
+                }
+
+                displayPeopleSelector();
+                
+                // 載入記錄
+                if (currentPersonId) {
+                    await loadRecords();
+                }
+            } catch (error) {
+                console.error('載入數據錯誤:', error);
+                alert('載入數據時發生錯誤，請重新整理頁面');
+            }
+        }
+
+        async function loadRecords() {
+            try {
+                const recordsSnapshot = await db.collection('records')
+                    .where('userId', '==', currentUser.uid)
+                    .where('personId', '==', currentPersonId)
+                    .orderBy('recordDate', 'desc')
+                    .orderBy('recordTime', 'desc')
+                    .get();
+                
+                records = recordsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                displayRecords();
+                updateStats();
+                updateChart();
+            } catch (error) {
+                console.error('載入記錄錯誤:', error);
+            }
+        }
+
+        // ============================================
+        // 人員管理
+        // ============================================
+
+        function displayPeopleSelector() {
+            const container = document.getElementById('peopleSelector');
+            
+            if (people.length === 0) {
+                container.innerHTML = '<p style="color: #999;">請先新增人員資料</p>';
+                return;
+            }
+
+            let html = '<div class="person-selector">';
+            
+            people.forEach(person => {
+                const age = calculateAge(person.birthdate);
+                const isActive = person.id === currentPersonId ? 'active' : '';
+                html += `
+                    <button class="person-btn ${isActive}" onclick="selectPerson('${person.id}')">
+                        👤 ${person.name}<br>
+                        <small>(${age}歲)</small>
+                    </button>
+                `;
+            });
+            
+            html += '</div>';
+            
+            if (currentPersonId) {
+                const currentPerson = people.find(p => p.id === currentPersonId);
+                if (currentPerson) {
+                    const age = calculateAge(currentPerson.birthdate);
+                    html = `
+                        <div class="current-person-info">
+                            <h3>👤 ${currentPerson.name}</h3>
+                            <p>出生日期: ${currentPerson.birthdate} (${age}歲)</p>
+                        </div>
+                    ` + html;
+                }
+            }
+            
+            container.innerHTML = html;
+        }
+
+        async function selectPerson(personId) {
+            currentPersonId = personId;
+            displayPeopleSelector();
+            await loadRecords();
+        }
+
+        function calculateAge(birthdate) {
+            const today = new Date();
+            const birth = new Date(birthdate);
+            let age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            
+            return age;
+        }
+
+        function showAddPersonModal() {
+            document.getElementById('addPersonModal').style.display = 'block';
+        }
+
+        function closeAddPersonModal() {
+            document.getElementById('addPersonModal').style.display = 'none';
+        }
+
+        function showManagePeopleModal() {
+            document.getElementById('managePeopleModal').style.display = 'block';
+            displayPeopleList();
+        }
+
+        function closeManagePeopleModal() {
+            document.getElementById('managePeopleModal').style.display = 'none';
+        }
+
+        async function displayPeopleList() {
+            const container = document.getElementById('peopleList');
+            
+            if (people.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">目前沒有人員資料</p>';
+                return;
+            }
+
+            let html = '';
+            for (const person of people) {
+                const age = calculateAge(person.birthdate);
+                
+                // 計算記錄數
+                const recordCount = records.filter(r => r.personId === person.id).length;
+                
+                html += `
+                    <div class="person-card">
+                        <div class="person-info">
+                            <div class="person-name">👤 ${person.name}</div>
+                            <div class="person-birthdate">
+                                出生日期: ${person.birthdate} 
+                                <span class="person-age">(${age}歲)</span>
+                            </div>
+                            <div style="color: #666; font-size: 0.85em; margin-top: 5px;">
+                                📊 共有 ${recordCount} 筆記錄
+                            </div>
+                        </div>
+                        <button class="delete-btn" onclick="deletePerson('${person.id}', '${person.name}', ${recordCount})">
+                            🗑️ 刪除
+                        </button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        document.getElementById('addPersonForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const personData = {
+                userId: currentUser.uid,
+                name: document.getElementById('personName').value,
+                birthdate: document.getElementById('personBirthdate').value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                const docRef = await db.collection('people').add(personData);
+                
+                people.push({
+                    id: docRef.id,
+                    ...personData
+                });
+
+                if (people.length === 1) {
+                    currentPersonId = docRef.id;
+                }
+
+                document.getElementById('addPersonForm').reset();
+                closeAddPersonModal();
+                displayPeopleSelector();
+
+                alert(`✅ 已成功新增人員：${personData.name}`);
+            } catch (error) {
+                console.error('新增人員錯誤:', error);
+                alert('新增人員時發生錯誤，請稍後再試');
+            }
+        });
+
+        async function deletePerson(personId, personName, recordCount) {
+            const message = recordCount > 0 
+                ? `確定要刪除 ${personName} 嗎？\n⚠️ 這將同時刪除該人員的 ${recordCount} 筆血壓記錄！`
+                : `確定要刪除 ${personName} 嗎？`;
+
+            if (confirm(message)) {
+                try {
+                    // 刪除人員
+                    await db.collection('people').doc(personId).delete();
+
+                    // 刪除該人員的所有記錄
+                    const recordsSnapshot = await db.collection('records')
+                        .where('personId', '==', personId)
+                        .get();
+                    
+                    const batch = db.batch();
+                    recordsSnapshot.docs.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    await batch.commit();
+
+                    // 更新本地數據
+                    people = people.filter(p => p.id !== personId);
+                    records = records.filter(r => r.personId !== personId);
+
+                    if (currentPersonId === personId) {
+                        currentPersonId = people.length > 0 ? people[0].id : null;
+                    }
+
+                    displayPeopleList();
+                    displayPeopleSelector();
+                    displayRecords();
+                    updateStats();
+                    updateChart();
+
+                    alert(`✅ 已刪除 ${personName} 及其相關記錄`);
+                } catch (error) {
+                    console.error('刪除人員錯誤:', error);
+                    alert('刪除人員時發生錯誤，請稍後再試');
+                }
+            }
+        }
+
+        // ============================================
+        // 血壓記錄
+        // ============================================
+
+        // 初始化日期時間
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            document.getElementById('date').valueAsDate = now;
+            document.getElementById('time').value = now.toTimeString().slice(0, 5);
+        });
+
+        document.getElementById('bpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!currentPersonId) {
+                alert('⚠️ 請先選擇或新增人員！');
+                showAddPersonModal();
+                return;
+            }
+
+            const recordData = {
+                userId: currentUser.uid,
+                personId: currentPersonId,
+                recordDate: document.getElementById('date').value,
+                recordTime: document.getElementById('time').value,
+                systolic: parseInt(document.getElementById('systolic').value),
+                diastolic: parseInt(document.getElementById('diastolic').value),
+                pulse: parseInt(document.getElementById('pulse').value),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                const docRef = await db.collection('records').add(recordData);
+                
+                records.unshift({
+                    id: docRef.id,
+                    ...recordData
+                });
+
+                // 清空表單
+                document.getElementById('systolic').value = '';
+                document.getElementById('diastolic').value = '';
+                document.getElementById('pulse').value = '';
+                document.getElementById('systolic').focus();
+
+                displayRecords();
+                updateStats();
+                updateChart();
+
+                const todayCount = records.filter(r => 
+                    r.personId === currentPersonId && 
+                    r.recordDate === recordData.recordDate
+                ).length;
+                
+                const person = people.find(p => p.id === currentPersonId);
+                alert(`✅ 已為 ${person.name} 儲存紀錄！\n📅 ${recordData.recordDate} 已有 ${todayCount} 筆記錄`);
+            } catch (error) {
+                console.error('儲存記錄錯誤:', error);
+                alert('儲存記錄時發生錯誤，請稍後再試');
+            }
+        });
+
+        function getBPStatus(systolic, diastolic) {
+            if (systolic < 120 && diastolic < 80) {
+                return { text: '正常', class: 'status-normal' };
+            } else if (systolic < 140 || diastolic < 90) {
+                return { text: '偏高', class: 'status-elevated' };
+            } else {
+                return { text: '高血壓', class: 'status-high' };
+            }
+        }
+
+        function displayRecords() {
+            const container = document.getElementById('recordsContainer');
+
+            if (!currentPersonId) {
+                container.innerHTML = '<div class="empty-state"><p>請先選擇人員</p></div>';
+                return;
+            }
+
+            const personRecords = records.filter(r => r.personId === currentPersonId);
+
+            if (personRecords.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>目前沒有紀錄，請新增第一筆血壓數據</p></div>';
+                return;
+            }
+
+            let html = `
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>時間</th>
+                            <th>收縮壓</th>
+                            <th>舒張壓</th>
+                            <th>脈搏</th>
+                            <th>狀態</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            personRecords.forEach(record => {
+                const status = getBPStatus(record.systolic, record.diastolic);
+                html += `
+                    <tr>
+                        <td>${record.recordDate}</td>
+                        <td>${record.recordTime}</td>
+                        <td>${record.systolic} mmHg</td>
+                        <td>${record.diastolic} mmHg</td>
+                        <td>${record.pulse} /分</td>
+                        <td><span class="status-indicator ${status.class}">${status.text}</span></td>
+                        <td><button class="delete-btn" onclick="deleteRecord('${record.id}')">刪除</button></td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        async function deleteRecord(recordId) {
+            if (confirm('確定要刪除這筆紀錄嗎？')) {
+                try {
+                    await db.collection('records').doc(recordId).delete();
+                    records = records.filter(r => r.id !== recordId);
+                    displayRecords();
+                    updateStats();
+                    updateChart();
+                } catch (error) {
+                    console.error('刪除記錄錯誤:', error);
+                    alert('刪除記錄時發生錯誤，請稍後再試');
+                }
+            }
+        }
+
+        function updateStats() {
+            if (!currentPersonId) {
+                document.getElementById('avgSystolic').textContent = '--';
+                document.getElementById('avgDiastolic').textContent = '--';
+                document.getElementById('avgPulse').textContent = '--';
+                document.getElementById('totalRecords').textContent = '0';
+                return;
+            }
+
+            const personRecords = records.filter(r => r.personId === currentPersonId);
+
+            if (personRecords.length === 0) {
+                document.getElementById('avgSystolic').textContent = '--';
+                document.getElementById('avgDiastolic').textContent = '--';
+                document.getElementById('avgPulse').textContent = '--';
+                document.getElementById('totalRecords').textContent = '0';
+                return;
+            }
+
+            const avgSys = Math.round(personRecords.reduce((sum, r) => sum + r.systolic, 0) / personRecords.length);
+            const avgDia = Math.round(personRecords.reduce((sum, r) => sum + r.diastolic, 0) / personRecords.length);
+            const avgPul = Math.round(personRecords.reduce((sum, r) => sum + r.pulse, 0) / personRecords.length);
+
+            document.getElementById('avgSystolic').textContent = avgSys;
+            document.getElementById('avgDiastolic').textContent = avgDia;
+            document.getElementById('avgPulse').textContent = avgPul;
+            document.getElementById('totalRecords').textContent = personRecords.length;
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('bpChart').getContext('2d');
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            if (!currentPersonId) {
+                return;
+            }
+
+            const personRecords = records.filter(r => r.personId === currentPersonId);
+
+            if (personRecords.length === 0) {
+                return;
+            }
+
+            // 按日期分組並計算每日平均值
+            const dailyAverages = {};
+            
+            personRecords.forEach(record => {
+                const date = record.recordDate;
+                
+                if (!dailyAverages[date]) {
+                    dailyAverages[date] = {
+                        systolic: [],
+                        diastolic: [],
+                        pulse: [],
+                        count: 0
+                    };
+                }
+                
+                dailyAverages[date].systolic.push(record.systolic);
+                dailyAverages[date].diastolic.push(record.diastolic);
+                dailyAverages[date].pulse.push(record.pulse);
+                dailyAverages[date].count++;
+            });
+
+            const dailyData = Object.keys(dailyAverages)
+                .map(date => {
+                    const data = dailyAverages[date];
+                    const avgSys = Math.round(data.systolic.reduce((a, b) => a + b, 0) / data.count);
+                    const avgDia = Math.round(data.diastolic.reduce((a, b) => a + b, 0) / data.count);
+                    const avgPul = Math.round(data.pulse.reduce((a, b) => a + b, 0) / data.count);
+                    
+                    return {
+                        date: date,
+                        systolic: avgSys,
+                        diastolic: avgDia,
+                        pulse: avgPul,
+                        count: data.count
+                    };
+                })
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(-30);
+
+            const labels = dailyData.map(d => `${d.date}\n(${d.count}次)`);
+            const systolicData = dailyData.map(d => d.systolic);
+            const diastolicData = dailyData.map(d => d.diastolic);
+            const pulseData = dailyData.map(d => d.pulse);
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '收縮壓 (SYS) 平均',
+                            data: systolicData,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '舒張壓 (DIA) 平均',
+                            data: diastolicData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '脈搏 (PUL) 平均',
+                            data: pulseData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const index = context.dataIndex;
+                                    return `當日量度次數: ${dailyData[index].count}次`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: '數值 (mmHg / bpm)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '日期 (量度次數)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 點擊彈出視窗外部關閉
+        window.onclick = function(event) {
+            const addModal = document.getElementById('addPersonModal');
+            const manageModal = document.getElementById('managePeopleModal');
+            
+            if (event.target == addModal) {
+                closeAddPersonModal();
+            }
+            if (event.target == manageModal) {
+                closeManagePeopleModal();
+            }
+        }
+
+        // ============================================
+        // 報表生成功能
+        // ============================================
+
+        // 初始化報表日期（預設最近30天）
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            
+            document.getElementById('reportEndDate').valueAsDate = today;
+            document.getElementById('reportStartDate').valueAsDate = thirtyDaysAgo;
+        });
+
+        function generateReport() {
+            if (!currentPersonId) {
+                alert('⚠️ 請先選擇人員！');
+                return;
+            }
+
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+
+            if (!startDate || !endDate) {
+                alert('⚠️ 請選擇開始和結束日期！');
+                return;
+            }
+
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('⚠️ 開始日期不能晚於結束日期！');
+                return;
+            }
+
+            const person = people.find(p => p.id === currentPersonId);
+            const filteredRecords = records.filter(r => 
+                r.personId === currentPersonId &&
+                r.recordDate >= startDate &&
+                r.recordDate <= endDate
+            ).sort((a, b) => {
+                if (a.recordDate !== b.recordDate) {
+                    return new Date(a.recordDate) - new Date(b.recordDate);
+                }
+                return a.recordTime.localeCompare(b.recordTime);
+            });
+
+            if (filteredRecords.length === 0) {
+                alert('📭 選擇的日期範圍內沒有記錄！');
+                return;
+            }
+
+            // 計算統計數據
+            const avgSystolic = Math.round(filteredRecords.reduce((sum, r) => sum + r.systolic, 0) / filteredRecords.length);
+            const avgDiastolic = Math.round(filteredRecords.reduce((sum, r) => sum + r.diastolic, 0) / filteredRecords.length);
+            const avgPulse = Math.round(filteredRecords.reduce((sum, r) => sum + r.pulse, 0) / filteredRecords.length);
+            
+            const maxSystolic = Math.max(...filteredRecords.map(r => r.systolic));
+            const minSystolic = Math.min(...filteredRecords.map(r => r.systolic));
+            const maxDiastolic = Math.max(...filteredRecords.map(r => r.diastolic));
+            const minDiastolic = Math.min(...filteredRecords.map(r => r.diastolic));
+
+            // 生成報表 HTML
+            let reportHTML = `
+                <div class="report-preview" id="printableReport">
+                    <div class="report-header">
+                        <h2>🩺 血壓監測報告</h2>
+                        <p style="color: #666;">Blood Pressure Monitoring Report</p>
+                    </div>
+
+                    <div class="report-info">
+                        <div><strong>姓名 Name:</strong> ${person.name}</div>
+                        <div><strong>出生日期 DOB:</strong> ${person.birthdate} (${calculateAge(person.birthdate)}歲)</div>
+                        <div><strong>報告日期 Report Date:</strong> ${new Date().toLocaleDateString('zh-TW')}</div>
+                        <div><strong>記錄期間 Period:</strong> ${startDate} 至 ${endDate}</div>
+                    </div>
+
+                    <div class="report-summary">
+                        <h3>📊 統計摘要 Summary</h3>
+                        <div class="report-summary-grid">
+                            <div class="report-summary-item">
+                                <div class="report-summary-value">${filteredRecords.length}</div>
+                                <div class="report-summary-label">總記錄數<br>Total Records</div>
+                            </div>
+                            <div class="report-summary-item">
+                                <div class="report-summary-value">${avgSystolic}</div>
+                                <div class="report-summary-label">平均收縮壓<br>Avg Systolic (mmHg)</div>
+                            </div>
+                            <div class="report-summary-item">
+                                <div class="report-summary-value">${avgDiastolic}</div>
+                                <div class="report-summary-label">平均舒張壓<br>Avg Diastolic (mmHg)</div>
+                            </div>
+                            <div class="report-summary-item">
+                                <div class="report-summary-value">${avgPulse}</div>
+                                <div class="report-summary-label">平均脈搏<br>Avg Pulse (bpm)</div>
+                            </div>
+                            <div class="report-summary-item">
+                                <div class="report-summary-value">${maxSystolic}/${maxDiastolic}</div>
+                                <div class="report-summary-label">最高血壓<br>Max BP</div>
+                            </div>
+                            <div class="report-summary-item">
+                                <div class="report-summary-value">${minSystolic}/${minDiastolic}</div>
+                                <div class="report-summary-label">最低血壓<br>Min BP</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #667eea; margin-top: 30px; margin-bottom: 15px;">📋 詳細記錄 Detailed Records</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>日期<br>Date</th>
+                                <th>時間<br>Time</th>
+                                <th>收縮壓<br>Systolic (mmHg)</th>
+                                <th>舒張壓<br>Diastolic (mmHg)</th>
+                                <th>脈搏<br>Pulse (bpm)</th>
+                                <th>狀態<br>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            filteredRecords.forEach(record => {
+                const status = getBPStatus(record.systolic, record.diastolic);
+                reportHTML += `
+                    <tr>
+                        <td>${record.recordDate}</td>
+                        <td>${record.recordTime}</td>
+                        <td style="text-align: center;">${record.systolic}</td>
+                        <td style="text-align: center;">${record.diastolic}</td>
+                        <td style="text-align: center;">${record.pulse}</td>
+                        <td><span class="status-indicator ${status.class}">${status.text}</span></td>
+                    </tr>
+                `;
+            });
+
+            reportHTML += `
+                        </tbody>
+                    </table>
+
+                    <div class="report-footer">
+                        <p><strong>備註 Notes:</strong></p>
+                        <p>正常血壓：收縮壓 < 120 mmHg，舒張壓 < 80 mmHg</p>
+                        <p>Normal BP: Systolic < 120 mmHg, Diastolic < 80 mmHg</p>
+                        <p style="margin-top: 20px;">本報告由血壓追蹤系統自動生成，僅供醫療參考</p>
+                        <p>This report is automatically generated for medical reference only</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('reportPreview').innerHTML = reportHTML;
+
+            // 滾動到報表位置
+            document.getElementById('reportPreview').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function printReport() {
+            const reportContent = document.getElementById('printableReport');
+            
+            if (!reportContent) {
+                alert('⚠️ 請先點擊「預覽報表」生成報表！');
+                return;
+            }
+
+            window.print();
+        }
+
+        async function exportToPDF() {
+            const reportContent = document.getElementById('printableReport');
+            
+            if (!reportContent) {
+                alert('⚠️ 請先點擊「預覽報表」生成報表！');
+                return;
+            }
+
+            // 使用 html2canvas 和 jsPDF 生成 PDF
+            // 需要加載這些庫
+            if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+                alert('📥 正在載入 PDF 生成工具，請稍候再試...');
+                
+                // 動態載入庫
+                const script1 = document.createElement('script');
+                script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                document.head.appendChild(script1);
+                
+                const script2 = document.createElement('script');
+                script2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                document.head.appendChild(script2);
+                
+                return;
+            }
+
+            try {
+                // 生成 PDF
+                const canvas = await html2canvas(reportContent, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgWidth = 210; // A4 寬度
+                const pageHeight = 297; // A4 高度
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                const person = people.find(p => p.id === currentPersonId);
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+                const filename = `血壓報告_${person.name}_${startDate}_${endDate}.pdf`;
+                
+                pdf.save(filename);
+                
+                alert('✅ PDF 已成功下載！');
+            } catch (error) {
+                console.error('PDF 生成錯誤:', error);
+                alert('❌ PDF 生成失敗，請嘗試使用「列印」功能，然後選擇「另存為 PDF」');
+            }
+
+        }
+    </script>
+
+    <!-- 動態載入 PDF 生成庫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>
