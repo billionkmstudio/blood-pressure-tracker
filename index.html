@@ -632,27 +632,239 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
             h1 {
                 font-size: 1.8em;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
+            .container {
+                padding: 0;
             }
 
+            .card {
+                padding: 20px;
+                margin-bottom: 15px;
+            }
+
+            /* 表單優化 */
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            label {
+                font-size: 15px;
+                margin-bottom: 6px;
+            }
+
+            input[type="date"],
+            input[type="time"],
+            input[type="number"],
+            select {
+                font-size: 16px;
+                padding: 14px;
+            }
+
+            /* 按鈕優化 */
+            .btn {
+                padding: 14px 20px;
+                font-size: 15px;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            button[style*="flex"] {
+                flex: 1 1 100% !important;
+                min-width: 100% !important;
+            }
+
+            /* 報表按鈕區域 */
+            div[style*="display: flex"] {
+                flex-direction: column !important;
+            }
+
+            /* 性別選項優化 */
+            .gender-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .gender-label {
+                padding: 12px;
+                font-size: 15px;
+            }
+
+            /* 記錄表格優化 */
             .records-table {
-                font-size: 14px;
+                font-size: 12px;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .records-table thead,
+            .records-table tbody,
+            .records-table tr {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
             }
 
             .records-table th,
             .records-table td {
-                padding: 8px;
+                padding: 8px 4px;
+                font-size: 12px;
             }
 
-            .gender-options {
-                flex-direction: column;
+            /* 調整表格欄位寬度 */
+            .records-table th:nth-child(1),
+            .records-table td:nth-child(1) { width: 18%; } /* 日期 */
+            
+            .records-table th:nth-child(2),
+            .records-table td:nth-child(2) { width: 12%; } /* 時間 */
+            
+            .records-table th:nth-child(3),
+            .records-table td:nth-child(3) { width: 15%; } /* 收縮壓 */
+            
+            .records-table th:nth-child(4),
+            .records-table td:nth-child(4) { width: 15%; } /* 舒張壓 */
+            
+            .records-table th:nth-child(5),
+            .records-table td:nth-child(5) { width: 12%; } /* 脈搏 */
+            
+            .records-table th:nth-child(6),
+            .records-table td:nth-child(6) { width: 15%; } /* 狀態 */
+            
+            .records-table th:nth-child(7),
+            .records-table td:nth-child(7) { width: 13%; } /* 操作 */
+
+            /* 狀態指示器 */
+            .status-indicator {
+                padding: 3px 6px;
+                font-size: 10px;
+                white-space: normal;
+                line-height: 1.2;
+            }
+
+            /* 刪除按鈕 */
+            .delete-btn {
+                padding: 5px 8px;
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            /* 統計卡片 */
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 2em;
+            }
+
+            /* 人員選擇器 */
+            .person-btn {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+
+            /* 當前人員資訊 */
+            .current-person-info {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            /* 圖表容器 */
+            #chart-container {
+                height: 250px;
+            }
+
+            /* 報表預覽優化 */
+            .report-preview {
+                padding: 15px;
+            }
+
+            .report-header h2 {
+                font-size: 20px;
+            }
+
+            .report-info {
+                font-size: 13px;
+                grid-template-columns: 1fr;
+            }
+
+            .report-summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .report-summary-value {
+                font-size: 20px;
+            }
+
+            .report-summary-label {
+                font-size: 11px;
+            }
+
+            .report-table {
+                font-size: 11px;
+            }
+
+            .report-table th,
+            .report-table td {
+                padding: 6px 4px;
             }
         }
+
+        /* 超小螢幕優化 (手機直向) */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            /* 報表統計改為單列 */
+            .report-summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* 表格更緊湊 */
+            .records-table th,
+            .records-table td {
+                padding: 6px 2px;
+                font-size: 11px;
+            }
+
+            .status-indicator {
+                font-size: 9px;
+                padding: 2px 4px;
+            }
+
+            .delete-btn {
+                padding: 4px 6px;
+                font-size: 10px;
+            }
+        }
+
 
         /* ============================================ */
         /* 打印樣式 Print Styles */
