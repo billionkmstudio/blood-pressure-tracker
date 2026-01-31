@@ -212,10 +212,18 @@
             line-height: 1.6;
         }
 
+        /* 表格容器 - 支援橫向滾動 */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+            -webkit-overflow-scrolling: touch; /* iOS 平滑滾動 */
+        }
+
         .records-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            min-width: 800px; /* 確保表格有最小寬度 */
         }
 
         .records-table th,
@@ -223,16 +231,34 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
+            white-space: nowrap; /* 防止文字換行 */
         }
 
         .records-table th {
             background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
             color: white;
             font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .records-table tr:hover {
             background: #fffafa;
+        }
+
+        /* 手機版優化 */
+        @media (max-width: 768px) {
+            .records-table th,
+            .records-table td {
+                padding: 8px;
+                font-size: 14px;
+            }
+            
+            .delete-btn {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
         }
 
         .status-indicator {
@@ -1291,6 +1317,9 @@
                     <button class="btn report-btn" onclick="getAIAnalysis()" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">
                         🤖 AI 健康分析
                     </button>
+                    <button class="btn report-btn" onclick="showAIAnalysisHistory()" style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);">
+                        📋 查看分析歷史
+                    </button>
                 </div>
 
                 <div id="reportPreview" style="margin-top: 20px;"></div>
@@ -1423,6 +1452,7 @@
         let people = [];
         let records = [];
         let chart = null;
+        let aiAnalysisHistory = []; // AI 分析歷史記錄
 
         // ============================================
         // 認證相關函數
@@ -1901,19 +1931,20 @@
             const gender = person ? person.gender : '男';
 
             let html = `
-                <table class="records-table">
-                    <thead>
-                        <tr>
-                            <th>日期</th>
-                            <th>時間</th>
-                            <th>收縮壓</th>
-                            <th>舒張壓</th>
-                            <th>脈搏</th>
-                            <th>狀態</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div class="table-container">
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>時間</th>
+                                <th>收縮壓</th>
+                                <th>舒張壓</th>
+                                <th>脈搏</th>
+                                <th>狀態</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             `;
 
             personRecords.forEach(record => {
@@ -1931,7 +1962,7 @@
                 `;
             });
 
-            html += '</tbody></table>';
+            html += '</tbody></table></div>';
             container.innerHTML = html;
         }
 
@@ -2339,6 +2370,105 @@
         // AI 健康分析功能
         // ============================================
 
+        // 載入 AI 分析歷史
+        async function loadAIAnalysisHistory() {
+            try {
+                const historySnapshot = await db.collection('aiAnalysisHistory')
+                    .where('userId', '==', currentUser.uid)
+                    .where('personId', '==', currentPersonId)
+                    .orderBy('timestamp', 'desc')
+                    .limit(10)
+                    .get();
+                
+                aiAnalysisHistory = historySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+            } catch (error) {
+                console.error('載入 AI 分析歷史錯誤:', error);
+                aiAnalysisHistory = [];
+            }
+        }
+
+        // 檢查是否可以生成新的 AI 分析
+        function canGenerateNewAnalysis() {
+            if (aiAnalysisHistory.length === 0) {
+                return { allowed: true, message: '' };
+            }
+
+            const lastAnalysis = aiAnalysisHistory[0];
+            const lastTimestamp = lastAnalysis.timestamp.toDate();
+            const now = new Date();
+            const daysSinceLastAnalysis = Math.floor((now - lastTimestamp) / (1000 * 60 * 60 * 24));
+
+            if (daysSinceLastAnalysis < 7) {
+                const daysRemaining = 7 - daysSinceLastAnalysis;
+                return {
+                    allowed: false,
+                    message: `請等待 ${daysRemaining} 天後再生成新的分析報告。\n上次分析時間：${lastTimestamp.toLocaleDateString('zh-TW')} ${lastTimestamp.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}`
+                };
+            }
+
+            return { allowed: true, message: '' };
+        }
+
+        // 顯示歷史 AI 分析
+        function showAIAnalysisHistory() {
+            const resultDiv = document.getElementById('aiAnalysisResult');
+            
+            if (aiAnalysisHistory.length === 0) {
+                resultDiv.innerHTML = `
+                    <div class="ai-analysis-card">
+                        <div class="ai-analysis-header">
+                            <span style="font-size: 32px;">📋</span>
+                            <h3>分析歷史記錄</h3>
+                        </div>
+                        <div style="padding: 20px; text-align: center; color: #666;">
+                            目前沒有歷史分析記錄
+                        </div>
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            }
+
+            let historyHTML = `
+                <div class="ai-analysis-card">
+                    <div class="ai-analysis-header">
+                        <span style="font-size: 32px;">📋</span>
+                        <h3>AI 分析歷史記錄（最近 10 次）</h3>
+                    </div>
+                    <div style="padding: 20px;">
+            `;
+
+            aiAnalysisHistory.forEach((analysis, index) => {
+                const timestamp = analysis.timestamp.toDate();
+                const dateStr = timestamp.toLocaleDateString('zh-TW');
+                const timeStr = timestamp.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+                
+                historyHTML += `
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #ff6b6b;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="color: #ff6b6b;">分析 #${index + 1}</strong>
+                            <span style="color: #666; font-size: 14px;">📅 ${dateStr} ${timeStr}</span>
+                        </div>
+                        <div style="color: #333; line-height: 1.6; white-space: pre-wrap;">${analysis.analysis}</div>
+                        ${index === 0 ? '<div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px; font-size: 14px; color: #856404;">🔖 最新分析</div>' : ''}
+                    </div>
+                `;
+            });
+
+            historyHTML += `
+                    </div>
+                </div>
+            `;
+
+            resultDiv.innerHTML = historyHTML;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         async function getAIAnalysis() {
             if (!currentPersonId) {
                 alert('⚠️ 請先選擇人員！');
@@ -2353,13 +2483,27 @@
                 return;
             }
 
+            // 載入歷史記錄
+            await loadAIAnalysisHistory();
+
+            // 檢查是否可以生成新分析
+            const canGenerate = canGenerateNewAnalysis();
+            if (!canGenerate.allowed) {
+                const showHistory = confirm(`⏰ ${canGenerate.message}\n\n是否要查看歷史分析報告？`);
+                if (showHistory) {
+                    showAIAnalysisHistory();
+                }
+                return;
+            }
+
             // 顯示載入狀態
             const resultDiv = document.getElementById('aiAnalysisResult');
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <div class="ai-analysis-card">
                     <div class="ai-loading">
-                        🤖 AI 正在分析您的血壓數據
+                        🤖 AI 正在分析您的血壓數據...<br>
+                        <small style="color: #666; margin-top: 10px; display: block;">這可能需要 10-30 秒</small>
                     </div>
                 </div>
             `;
@@ -2458,21 +2602,48 @@ ${recordsSummary.slice(0, 10).map((r, i) =>
                 const data = await response.json();
                 const analysis = data.content[0].text;
 
+                // 儲存到 Firestore
+                await db.collection('aiAnalysisHistory').add({
+                    userId: currentUser.uid,
+                    personId: currentPersonId,
+                    personName: person.name,
+                    analysis: analysis,
+                    recordCount: recentRecords.length,
+                    avgSystolic: avgSystolic,
+                    avgDiastolic: avgDiastolic,
+                    avgPulse: avgPulse,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // 重新載入歷史記錄
+                await loadAIAnalysisHistory();
+
                 // 顯示分析結果
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('zh-TW');
+                const timeStr = now.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+
                 resultDiv.innerHTML = `
                     <div class="ai-analysis-card">
                         <div class="ai-analysis-header">
                             <span style="font-size: 32px;">🤖</span>
                             <h3>AI 健康分析報告</h3>
+                            <div style="font-size: 14px; color: #666; margin-top: 5px;">生成時間：${dateStr} ${timeStr}</div>
                         </div>
                         <div class="ai-analysis-content">${analysis.replace(/\n/g, '<br>')}</div>
                         <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; font-size: 14px; color: #666;">
                             <strong>⚠️ 重要提示：</strong> 此分析僅供參考，不能替代專業醫療建議。如有健康疑慮，請諮詢您的醫生。
                         </div>
+                        <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-radius: 8px; font-size: 14px; color: #856404;">
+                            ⏰ <strong>分析限制：</strong> 為節省成本，每人每 7 天只能生成 1 次新的 AI 分析報告。您可以隨時查看歷史分析記錄。
+                        </div>
+                        <button onclick="showAIAnalysisHistory()" class="btn btn-secondary" style="margin-top: 15px; width: auto; padding: 10px 20px;">
+                            📋 查看歷史分析記錄
+                        </button>
                     </div>
                 `;
 
-                console.log('✅ AI 分析完成');
+                console.log('✅ AI 分析完成並已儲存');
 
             } catch (error) {
                 console.error('❌ AI 分析失敗:', error);
