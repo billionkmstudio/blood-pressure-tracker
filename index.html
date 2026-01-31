@@ -2435,8 +2435,8 @@ ${recordsSummary.slice(0, 10).map((r, i) =>
 
 請用親切、專業但不嚇人的語氣回答。避免使用過於醫學化的術語。`;
 
-                // 調用 Claude API
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                // 調用 Claude API（透過 Cloudflare Workers）
+                const response = await fetch('https://blood-pressure-ai-proxy.billionkmstudio.workers.dev/v1/messages', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
