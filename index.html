@@ -2373,6 +2373,10 @@
         // 載入 AI 分析歷史
         async function loadAIAnalysisHistory() {
             try {
+                console.log('🔍 開始載入 AI 分析歷史...');
+                console.log('👤 當前用戶 UID:', currentUser.uid);
+                console.log('👥 當前人員 ID:', currentPersonId);
+                
                 const historySnapshot = await db.collection('aiAnalysisHistory')
                     .where('userId', '==', currentUser.uid)
                     .where('personId', '==', currentPersonId)
@@ -2380,12 +2384,18 @@
                     .limit(10)
                     .get();
                 
+                console.log('📊 找到的歷史記錄數量:', historySnapshot.docs.length);
+                
                 aiAnalysisHistory = historySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
+                
+                console.log('✅ AI 分析歷史載入成功:', aiAnalysisHistory);
             } catch (error) {
-                console.error('載入 AI 分析歷史錯誤:', error);
+                console.error('❌ 載入 AI 分析歷史錯誤:', error);
+                console.error('錯誤詳情:', error.message);
+                console.error('錯誤代碼:', error.code);
                 aiAnalysisHistory = [];
             }
         }
@@ -2414,6 +2424,10 @@
 
         // 顯示歷史 AI 分析
         function showAIAnalysisHistory() {
+            console.log('📋 顯示 AI 分析歷史...');
+            console.log('📊 歷史記錄數量:', aiAnalysisHistory.length);
+            console.log('📄 歷史記錄內容:', aiAnalysisHistory);
+            
             const resultDiv = document.getElementById('aiAnalysisResult');
             
             if (aiAnalysisHistory.length === 0) {
@@ -2425,6 +2439,8 @@
                         </div>
                         <div style="padding: 20px; text-align: center; color: #666;">
                             目前沒有歷史分析記錄
+                            <br><br>
+                            <small style="color: #999;">提示：生成 AI 分析後，歷史記錄會自動儲存在雲端</small>
                         </div>
                     </div>
                 `;
@@ -2602,8 +2618,16 @@ ${recordsSummary.slice(0, 10).map((r, i) =>
                 const data = await response.json();
                 const analysis = data.content[0].text;
 
+                console.log('💾 準備儲存 AI 分析到 Firestore...');
+                console.log('📝 資料:', {
+                    userId: currentUser.uid,
+                    personId: currentPersonId,
+                    personName: person.name,
+                    analysisLength: analysis.length
+                });
+
                 // 儲存到 Firestore
-                await db.collection('aiAnalysisHistory').add({
+                const docRef = await db.collection('aiAnalysisHistory').add({
                     userId: currentUser.uid,
                     personId: currentPersonId,
                     personName: person.name,
@@ -2614,6 +2638,8 @@ ${recordsSummary.slice(0, 10).map((r, i) =>
                     avgPulse: avgPulse,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
+                
+                console.log('✅ 儲存成功！文件 ID:', docRef.id);
 
                 // 重新載入歷史記錄
                 await loadAIAnalysisHistory();
