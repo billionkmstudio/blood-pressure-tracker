@@ -171,11 +171,28 @@
 
         .btn-secondary {
             background: #48dbfb;
-            margin-top: 10px;
         }
 
         .btn-danger {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        /* 報表按鈕容器 */
+        .report-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .report-btn {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .report-hint {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
         }
 
         .records-table {
@@ -676,18 +693,27 @@
             .btn {
                 padding: 14px 20px;
                 font-size: 15px;
-                width: 100%;
                 margin-bottom: 10px;
             }
 
-            button[style*="flex"] {
-                flex: 1 1 100% !important;
+            /* 報表按鈕容器 - 強制垂直排列 */
+            .report-buttons {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 10px !important;
+            }
+
+            .report-btn {
+                flex: none !important;
+                width: 100% !important;
                 min-width: 100% !important;
             }
 
-            /* 報表按鈕區域 */
-            div[style*="display: flex"] {
-                flex-direction: column !important;
+            /* 提示文字優化 */
+            .report-hint {
+                font-size: 14px;
+                line-height: 1.6;
+                word-wrap: break-word;
             }
 
             /* 性別選項優化 */
@@ -1087,7 +1113,7 @@
             <!-- 報表生成 -->
             <div class="card">
                 <h2>📄 生成醫療報表</h2>
-                <p style="color: #666; margin-bottom: 15px;">💡 選擇日期範圍，生成適合給醫生參考的血壓記錄報表</p>
+                <p class="report-hint">💡 選擇日期範圍，生成適合給醫生參考的血壓記錄報表</p>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -1100,11 +1126,11 @@
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn" onclick="generateReport()" style="flex: 1; min-width: 200px;">
+                <div class="report-buttons">
+                    <button class="btn report-btn" onclick="generateReport()">
                         📊 預覽報表
                     </button>
-                    <button class="btn btn-secondary" onclick="downloadReportPDF()" style="flex: 1; min-width: 200px;">
+                    <button class="btn btn-secondary report-btn" onclick="downloadReportPDF()">
                         📄 下載 PDF
                     </button>
                 </div>
