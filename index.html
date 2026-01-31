@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>血壓紀錄追蹤器 - 雲端版</title>
+    
+    <!-- PDF 生成庫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -478,95 +483,106 @@
 
         .report-preview {
             background: white;
-            padding: 40px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             margin-top: 20px;
         }
 
         .report-header {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ff6b6b;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 15px;
         }
 
         .report-header h2 {
             color: #ff6b6b;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             border: none;
             padding: 0;
+            font-size: 28px;
+        }
+
+        .report-header p {
+            color: #666;
+            font-size: 14px;
         }
 
         .report-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
         }
 
         .report-info div {
-            padding: 8px;
-            background: #fffafa;
-            border-radius: 5px;
+            margin: 5px 0;
+            font-size: 14px;
         }
 
         .report-info strong {
-            color: #ff6b6b;
+            color: #333;
         }
 
         .report-summary {
-            background: #fff9f0;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border: 2px solid #feca57;
+            margin: 20px 0;
         }
 
         .report-summary h3 {
             color: #ff6b6b;
             margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #ff6b6b;
+            padding-bottom: 8px;
         }
 
         .report-summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
+            margin-bottom: 20px;
         }
 
         .report-summary-item {
             text-align: center;
             padding: 15px;
             background: white;
+            border: 2px solid #ff6b6b;
             border-radius: 8px;
         }
 
         .report-summary-value {
-            font-size: 1.8em;
+            font-size: 24px;
             font-weight: bold;
             color: #ff6b6b;
+            margin-bottom: 8px;
         }
 
         .report-summary-label {
-            font-size: 0.9em;
+            font-size: 12px;
             color: #666;
-            margin-top: 5px;
+            line-height: 1.4;
         }
 
         .report-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
             font-size: 14px;
+            background: white;
         }
 
         .report-table th,
         .report-table td {
             padding: 10px;
-            text-align: left;
+            text-align: center;
             border: 1px solid #ddd;
         }
+
 
         .report-table th {
             background: #ff6b6b;
@@ -635,6 +651,114 @@
 
             .gender-options {
                 flex-direction: column;
+            }
+        }
+
+        /* ============================================ */
+        /* 打印樣式 Print Styles */
+        /* ============================================ */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+                padding: 15mm !important;
+                margin: 0 !important;
+                background: white !important;
+            }
+
+            /* 隱藏不需要的元素 */
+            h1:first-child,
+            .card h2,
+            .card > p:first-of-type,
+            .form-row,
+            .form-group,
+            button,
+            label,
+            input,
+            select,
+            .gender-options,
+            .current-person-info,
+            .person-selector,
+            .stats-grid,
+            canvas,
+            #recordsTable,
+            #user-info {
+                display: none !important;
+            }
+
+            .card {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            /* 確保報表顯示 - 不改變 display 屬性 */
+            .report-preview {
+                border: none !important;
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .report-header {
+                page-break-after: avoid !important;
+            }
+
+            .report-info {
+                background: #f8f9fa !important;
+                page-break-inside: avoid !important;
+            }
+
+            .report-summary {
+                page-break-inside: avoid !important;
+            }
+
+            .report-summary-grid {
+                page-break-inside: avoid !important;
+            }
+
+            /* 表格樣式 */
+            .report-table {
+                page-break-inside: auto !important;
+            }
+
+            .report-table thead {
+                display: table-header-group !important;
+            }
+
+            .report-table tbody {
+                display: table-row-group !important;
+            }
+
+            .report-table tr {
+                page-break-inside: avoid !important;
+            }
+
+            .report-table tbody tr:nth-child(even) {
+                background: #f8f9fa !important;
+            }
+
+            /* 報表頁尾 */
+            .report-footer {
+                page-break-inside: avoid !important;
+            }
+
+            /* 保留顏色 */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            @page {
+                size: A4;
+                margin: 15mm;
             }
         }
     </style>
@@ -768,8 +892,8 @@
                     <button class="btn" onclick="generateReport()" style="flex: 1; min-width: 200px;">
                         📊 預覽報表
                     </button>
-                    <button class="btn btn-secondary" onclick="printReport()" style="flex: 1; min-width: 200px;">
-                        🖨️ 列印報表
+                    <button class="btn btn-secondary" onclick="downloadReportPDF()" style="flex: 1; min-width: 200px;">
+                        📄 下載 PDF
                     </button>
                 </div>
 
@@ -1741,7 +1865,7 @@
             document.getElementById('reportPreview').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function printReport() {
+        async function downloadReportPDF() {
             const reportContent = document.getElementById('printableReport');
             
             if (!reportContent) {
@@ -1749,7 +1873,67 @@
                 return;
             }
 
-            window.print();
+            // 顯示載入訊息
+            const originalButton = event.target;
+            const originalText = originalButton.innerHTML;
+            originalButton.innerHTML = '⏳ 生成中...';
+            originalButton.disabled = true;
+
+            try {
+                console.log('開始生成 PDF...');
+                
+                // 使用 html2canvas 將 HTML 轉換為圖片
+                const canvas = await html2canvas(reportContent, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                
+                // 創建 PDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgWidth = 190; // A4 寬度 - 邊距
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                const pageHeight = 277; // A4 高度
+                let heightLeft = imgHeight;
+                let position = 10;
+
+                // 添加第一頁
+                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                // 如果內容超過一頁，添加額外頁面
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight + 10;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                // 生成檔案名稱
+                const person = people.find(p => p.id === currentPersonId);
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}`;
+                const filename = `血壓報告_${person.name}_${dateStr}.pdf`;
+                
+                // 下載 PDF
+                pdf.save(filename);
+                
+                console.log('PDF 已生成！');
+                alert('✅ PDF 已成功下載！');
+                
+            } catch (error) {
+                console.error('PDF 生成失敗:', error);
+                alert('❌ PDF 生成失敗: ' + error.message);
+            } finally {
+                // 恢復按鈕狀態
+                originalButton.innerHTML = originalText;
+                originalButton.disabled = false;
+            }
         }
 
         // 點擊彈出視窗外部關閉
