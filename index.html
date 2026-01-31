@@ -92,6 +92,22 @@
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        /* 日期和時間輸入框特殊處理 */
+        input[type="date"],
+        input[type="time"] {
+            text-align: center;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            opacity: 0.6;
+            cursor: pointer;
         }
 
         input:focus,
@@ -703,8 +719,16 @@
             input[type="time"],
             input[type="number"],
             select {
-                font-size: 16px;
-                padding: 14px;
+                font-size: 15px;
+                padding: 12px 10px;
+                text-align: center;
+            }
+
+            /* 特別優化日期和時間輸入框 */
+            input[type="date"],
+            input[type="time"] {
+                font-size: 14px;
+                padding: 12px 8px;
             }
 
             /* 按鈕優化 */
@@ -926,6 +950,22 @@
             .delete-btn {
                 padding: 4px 6px;
                 font-size: 10px;
+            }
+
+            /* 進一步縮小輸入框字體 */
+            input[type="date"],
+            input[type="time"] {
+                font-size: 13px;
+                padding: 10px 6px;
+            }
+
+            input[type="number"] {
+                font-size: 14px;
+                padding: 10px 8px;
+            }
+
+            label {
+                font-size: 14px;
             }
         }
 
