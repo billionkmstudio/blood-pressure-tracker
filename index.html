@@ -2423,12 +2423,31 @@
         }
 
         // 顯示歷史 AI 分析
-        function showAIAnalysisHistory() {
+        async function showAIAnalysisHistory() {
+            if (!currentPersonId) {
+                alert('⚠️ 請先選擇人員！');
+                return;
+            }
+
+            const resultDiv = document.getElementById('aiAnalysisResult');
+            
+            // 顯示載入中
+            resultDiv.innerHTML = `
+                <div class="ai-analysis-card">
+                    <div class="ai-loading">
+                        📋 載入分析歷史記錄中...
+                    </div>
+                </div>
+            `;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // 先載入歷史資料
+            await loadAIAnalysisHistory();
+            
             console.log('📋 顯示 AI 分析歷史...');
             console.log('📊 歷史記錄數量:', aiAnalysisHistory.length);
             console.log('📄 歷史記錄內容:', aiAnalysisHistory);
-            
-            const resultDiv = document.getElementById('aiAnalysisResult');
             
             if (aiAnalysisHistory.length === 0) {
                 resultDiv.innerHTML = `
@@ -2444,8 +2463,6 @@
                         </div>
                     </div>
                 `;
-                resultDiv.style.display = 'block';
-                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 return;
             }
 
