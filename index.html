@@ -26,6 +26,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding-bottom: 20px;
         }
 
         .auth-container {
@@ -436,6 +437,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .user-email-container {
+            flex: 1;
+            min-width: 200px;
+            word-break: break-all;
+        }
+
+        .logout-btn {
+            width: auto;
+            padding: 10px 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .loading {
@@ -651,6 +667,7 @@
         @media (max-width: 768px) {
             body {
                 padding: 10px;
+                min-height: auto;
             }
 
             h1 {
@@ -659,6 +676,7 @@
 
             .container {
                 padding: 0;
+                padding-bottom: 10px;
             }
 
             .card {
@@ -784,6 +802,26 @@
                 padding: 5px 8px;
                 font-size: 11px;
                 white-space: nowrap;
+            }
+
+            /* 用戶資訊和登出按鈕 */
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 15px;
+            }
+
+            .user-email-container {
+                width: 100%;
+                font-size: 14px;
+                word-break: break-all;
+            }
+
+            .logout-btn {
+                width: 100%;
+                padding: 12px 20px;
+                font-size: 15px;
             }
 
             /* 統計卡片 */
@@ -1060,11 +1098,11 @@
 
             <!-- 用戶資訊 -->
             <div class="user-info">
-                <div>
+                <div class="user-email-container">
                     <strong>👤 登入帳號：</strong>
                     <span id="user-email"></span>
                 </div>
-                <button class="btn btn-danger" onclick="logout()" style="width: auto; padding: 10px 20px;">🚪 登出</button>
+                <button class="btn btn-danger logout-btn" onclick="logout()">🚪 登出</button>
             </div>
 
             <!-- 人員管理 -->
