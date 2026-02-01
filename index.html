@@ -1180,6 +1180,58 @@
                 margin: 15mm;
             }
         }
+
+        /* 頁尾樣式 */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            font-size: 14px;
+            line-height: 1.8;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+        }
+
+        .footer-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-copyright {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .footer-contact {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .footer-contact a {
+            color: white;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+            transition: border-color 0.3s;
+        }
+
+        .footer-contact a:hover {
+            border-bottom-color: white;
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 25px 15px;
+                font-size: 13px;
+            }
+            
+            .footer-title {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1371,6 +1423,13 @@
                 <div id="recordsContainer"></div>
             </div>
         </div>
+
+        <!-- 頁尾 -->
+        <footer class="footer">
+            <div class="footer-title">Blood Pressure Tracker</div>
+            <div class="footer-copyright">© 2026 Billion Studio. All rights reserved.</div>
+            <div class="footer-contact">Contact: <a href="mailto:billionstudio@mail.com">billionstudio@mail.com</a></div>
+        </footer>
     </div>
 
     <!-- 新增人員彈出視窗 -->
