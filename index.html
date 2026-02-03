@@ -1431,7 +1431,7 @@
         <footer class="footer">
             <div class="footer-title">Blood Pressure Tracker</div>
             <div class="footer-copyright">© 2026 Billion Studio. All rights reserved.</div>
-            <div class="footer-contact">Contact: <a href="/cdn-cgi/l/email-protection#46242f2a2a2f2928353233222f29062b272f2a6825292b"><span class="__cf_email__" data-cfemail="7e1c1712121711100d0a0b1a17113e131f1712501d1113">[email&#160;protected]</span></a></div>
+            <div class="footer-contact">Contact: <a href="/cdn-cgi/l/email-protection#e98b8085858086879a9d9c8d8086a984888085c78a8684"><span class="__cf_email__" data-cfemail="187a7174747177766b6c6d7c71775875797174367b7775">[email&#160;protected]</span></a></div>
         </footer>
     </div>
 
@@ -2610,13 +2610,7 @@
                 // 取最近 30 筆記錄
                 const recentRecords = personRecords
                     .sort((a, b) => {
-                        const dateA = new Date(a.recordDate + ' ' + a.recordTime);
-                        const dateB = new Date(b.recordDate + ' ' + b.recordTime);
-                        return dateB - dateA;
-                    })
-                    .slice(0, 30);
-
-                const age = calculateAge(person.birthdate);
+                        const dateA   const age = calculateAge(person.birthdate);
                 const gender = person.gender;
 
                 // 準備資料摘要
@@ -2775,4 +2769,14 @@ ${recordsSummary.slice(0, 10).map((r, i) =>
         window.onclick = function(event) {
             const addModal = document.getElementById('addPersonModal');
             const manageModal = document.getElementById('managePeopleModal');
-    
+            
+            if (event.target == addModal) {
+                closeAddPersonModal();
+            }
+            if (event.target == manageModal) {
+                closeManagePeopleModal();
+            }
+        }
+    </script>
+</body>
+</html>
