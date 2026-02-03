@@ -1431,7 +1431,7 @@
         <footer class="footer">
             <div class="footer-title">Blood Pressure Tracker</div>
             <div class="footer-copyright">© 2026 Billion Studio. All rights reserved.</div>
-            <div class="footer-contact">Contact: <a href="/cdn-cgi/l/email-protection#e98b8085858086879a9d9c8d8086a984888085c78a8684"><span class="__cf_email__" data-cfemail="187a7174747177766b6c6d7c71775875797174367b7775">[email&#160;protected]</span></a></div>
+            <div class="footer-contact">Contact: <a href="/cdn-cgi/l/email-protection#8eece7e2e2e7e1e0fdfafbeae7e1cee3efe7e2a0ede1e3"><span class="__cf_email__" data-cfemail="54363d38383d3b3a272021303d3b1439353d387a373b39">[email&#160;protected]</span></a></div>
         </footer>
     </div>
 
@@ -1483,7 +1483,7 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
@@ -2610,7 +2610,13 @@
                 // 取最近 30 筆記錄
                 const recentRecords = personRecords
                     .sort((a, b) => {
-                        const dateA   const age = calculateAge(person.birthdate);
+                        const dateA = new Date(a.recordDate + ' ' + a.recordTime);
+                        const dateB = new Date(b.recordDate + ' ' + b.recordTime);
+                        return dateB - dateA;
+                    })
+                    .slice(0, 30);
+
+                const age = calculateAge(person.birthdate);
                 const gender = person.gender;
 
                 // 準備資料摘要
@@ -2769,7 +2775,7 @@ ${recordsSummary.slice(0, 10).map((r, i) =>
         window.onclick = function(event) {
             const addModal = document.getElementById('addPersonModal');
             const manageModal = document.getElementById('managePeopleModal');
-            
+                
             if (event.target == addModal) {
                 closeAddPersonModal();
             }
