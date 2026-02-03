@@ -631,16 +631,17 @@
         }
 
         .report-summary-value {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             color: #ff6b6b;
             margin-bottom: 8px;
         }
 
         .report-summary-label {
-            font-size: 12px;
+            font-size: 14px;
             color: #666;
-            line-height: 1.4;
+            line-height: 1.5;
+            font-weight: 500;
         }
 
         /* AI 分析結果樣式 */
@@ -1002,11 +1003,11 @@
             }
 
             .report-summary-value {
-                font-size: 20px;
+                font-size: 22px;
             }
 
             .report-summary-label {
-                font-size: 11px;
+                font-size: 12px;
             }
 
             .report-table {
@@ -1430,7 +1431,7 @@
         <footer class="footer">
             <div class="footer-title">Blood Pressure Tracker</div>
             <div class="footer-copyright">© 2026 Billion Studio. All rights reserved.</div>
-            <div class="footer-contact">Contact: <a href="mailto:billionstudio@mail.com">billionstudio@mail.com</a></div>
+            <div class="footer-contact">Contact: <a href="/cdn-cgi/l/email-protection#46242f2a2a2f2928353233222f29062b272f2a6825292b"><span class="__cf_email__" data-cfemail="7e1c1712121711100d0a0b1a17113e131f1712501d1113">[email&#160;protected]</span></a></div>
         </footer>
     </div>
 
@@ -1482,7 +1483,7 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
@@ -2281,10 +2282,6 @@
                         <h3>📊 統計摘要 Summary</h3>
                         <div class="report-summary-grid">
                             <div class="report-summary-item">
-                                <div class="report-summary-value">${filteredRecords.length}</div>
-                                <div class="report-summary-label">總記錄數<br>Total Records</div>
-                            </div>
-                            <div class="report-summary-item">
                                 <div class="report-summary-value">${avgSystolic}</div>
                                 <div class="report-summary-label">平均收縮壓<br>Avg Systolic (mmHg)</div>
                             </div>
@@ -2295,6 +2292,10 @@
                             <div class="report-summary-item">
                                 <div class="report-summary-value">${avgPulse}</div>
                                 <div class="report-summary-label">平均脈搏<br>Avg Pulse (bpm)</div>
+                            </div>
+                            <div class="report-summary-item">
+                                <div class="report-summary-value">${filteredRecords.length}</div>
+                                <div class="report-summary-label">總記錄數<br>Total Records</div>
                             </div>
                             <div class="report-summary-item">
                                 <div class="report-summary-value">${maxSystolic}/${maxDiastolic}</div>
@@ -2774,14 +2775,4 @@ ${recordsSummary.slice(0, 10).map((r, i) =>
         window.onclick = function(event) {
             const addModal = document.getElementById('addPersonModal');
             const manageModal = document.getElementById('managePeopleModal');
-            
-            if (event.target == addModal) {
-                closeAddPersonModal();
-            }
-            if (event.target == manageModal) {
-                closeManagePeopleModal();
-            }
-        }
-    </script>
-</body>
-</html>
+    
