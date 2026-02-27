@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>血壓紀錄追蹤器 ｜ BP Tracker - 優化版 v2.0</title>
+    <title>Blood Pressure Tracker v2.0</title>
     
     <!--
     ╔══════════════════════════════════════════════════════════════╗
@@ -1188,242 +1188,255 @@
     <!-- 載入中畫面 -->
     <div id="loading" class="loading">
         <div class="loading-spinner"></div>
-        <p>正在載入...</p>
+        <p>Loading...</p>
     </div>
 
-    <!-- 登入/註冊介面 -->
+    <!-- Disclaimer Modal -->
+    <div id="disclaimerModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); overflow:auto;">
+        <div style="background:white; margin:10% auto; padding:40px; border-radius:15px; width:90%; max-width:500px; box-shadow:0 10px 50px rgba(0,0,0,0.4);">
+            <h2 style="color:#ff6b6b; margin-bottom:20px; text-align:center;">⚠️ Important Notice</h2>
+            <p style="line-height:1.8; color:#333; font-size:15px;">
+                This system is for <strong>demonstration purposes only</strong>. User data is stored securely in Firebase. By using this system, you acknowledge that this is a demo application.
+            </p>
+            <button onclick="dismissDisclaimer()" style="margin-top:25px; width:100%; padding:15px; background:linear-gradient(135deg,#ff6b6b,#feca57); color:white; border:none; border-radius:8px; font-size:16px; font-weight:600; cursor:pointer;">
+                I Understand — Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- Login / Register -->
     <div id="auth-container" class="auth-container" style="display: none;">
-        <h2>🩺 血壓紀錄追蹤器</h2>
+        <h2>🩺 Blood Pressure Tracker</h2>
         
         <div id="auth-error" style="display: none;" class="error-message"></div>
         
-        <!-- 登入表單 -->
+        <!-- Login Form -->
         <form id="login-form">
             <div class="form-group">
-                <label for="login-email">電子郵件</label>
+                <label for="login-email">Email</label>
                 <input type="email" id="login-email" required placeholder="your@email.com">
             </div>
             <div class="form-group">
-                <label for="login-password">密碼</label>
-                <input type="password" id="login-password" required placeholder="至少 6 個字元">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required placeholder="At least 6 characters">
             </div>
-            <button type="submit" class="btn">🔐 登入</button>
+            <button type="submit" class="btn">🔐 Login</button>
         </form>
 
         <div class="auth-toggle">
-            還沒有帳號？<a href="#" id="show-register">立即註冊</a>
+            Don't have an account? <a href="#" id="show-register">Register now</a>
         </div>
 
-        <!-- 註冊表單 -->
+        <!-- Register Form -->
         <form id="register-form" style="display: none;">
             <div class="form-group">
-                <label for="register-email">電子郵件</label>
+                <label for="register-email">Email</label>
                 <input type="email" id="register-email" required placeholder="your@email.com">
             </div>
             <div class="form-group">
-                <label for="register-password">密碼</label>
-                <input type="password" id="register-password" required placeholder="至少 6 個字元">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" required placeholder="At least 6 characters">
             </div>
             <div class="form-group">
-                <label for="register-password-confirm">確認密碼</label>
-                <input type="password" id="register-password-confirm" required placeholder="再次輸入密碼">
+                <label for="register-password-confirm">Confirm Password</label>
+                <input type="password" id="register-password-confirm" required placeholder="Re-enter password">
             </div>
-            <button type="submit" class="btn">✅ 註冊</button>
+            <button type="submit" class="btn">✅ Register</button>
         </form>
 
         <div class="auth-toggle" id="show-login-link" style="display: none;">
-            已有帳號？<a href="#" id="show-login">返回登入</a>
+            Already have an account? <a href="#" id="show-login">Back to Login</a>
         </div>
     </div>
 
     <!-- 主應用程式介面 -->
     <div id="app-content">
         <div class="container">
-            <h1>🩺 血壓紀錄追蹤器</h1>
+            <h1>🩺 Blood Pressure Tracker</h1>
 
-            <!-- 🔧 優化版本提示 -->
+            <!-- Optimisation notice -->
             <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
-                ✅ <strong>已優化：</strong> PDF 檔案大小減少 75% | 載入速度提升 60% | 頻寬消耗降低 80%
+                ✅ <strong>Optimised:</strong> PDF size reduced 75% | Loading speed improved 60% | Bandwidth usage reduced 80%
             </div>
 
-            <!-- 用戶資訊 -->
+            <!-- User Info -->
             <div class="user-info">
                 <div class="user-email-container">
-                    <strong>👤 登入帳號：</strong>
+                    <strong>👤 Logged in as:</strong>
                     <span id="user-email"></span>
                 </div>
-                <button class="btn btn-danger logout-btn" onclick="logout()">🚪 登出</button>
+                <button class="btn btn-danger logout-btn" onclick="logout()">🚪 Logout</button>
             </div>
 
-            <!-- 人員管理 -->
+            <!-- People Management -->
             <div class="card">
-                <h2>👤 人員管理</h2>
+                <h2>👤 People Management</h2>
                 <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                    <button class="btn" style="flex: 0 0 auto; width: auto; padding: 10px 20px;" onclick="showAddPersonModal()">➕ 新增人員</button>
-                    <button class="btn btn-secondary" style="flex: 0 0 auto; width: auto; padding: 10px 20px;" onclick="showManagePeopleModal()">✏️ 管理人員</button>
+                    <button class="btn" style="flex: 0 0 auto; width: auto; padding: 10px 20px;" onclick="showAddPersonModal()">➕ Add Person</button>
+                    <button class="btn btn-secondary" style="flex: 0 0 auto; width: auto; padding: 10px 20px;" onclick="showManagePeopleModal()">✏️ Manage People</button>
                 </div>
                 <div id="peopleSelector"></div>
             </div>
 
-            <!-- 輸入表單 -->
+            <!-- BP Entry Form -->
             <div class="card">
-                <h2>新增血壓紀錄</h2>
-                <p style="color: #666; margin-bottom: 15px;">💡 您可以手動輸入任何日期和時間的血壓記錄，支援每天多次量度</p>
+                <h2>Add Blood Pressure Record</h2>
+                <p style="color: #666; margin-bottom: 15px;">💡 Enter readings for any date and time. Multiple readings per day are supported.</p>
                 <form id="bpForm">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="date">日期 *</label>
+                            <label for="date">Date *</label>
                             <input type="date" id="date" required>
                         </div>
                         <div class="form-group">
-                            <label for="time">時間 *</label>
+                            <label for="time">Time *</label>
                             <input type="time" id="time" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="systolic">收縮壓 (SYS) mmHg *</label>
-                            <input type="number" id="systolic" min="50" max="250" placeholder="例如: 151" required>
+                            <label for="systolic">Systolic (SYS) mmHg *</label>
+                            <input type="number" id="systolic" min="50" max="250" placeholder="e.g. 151" required>
                         </div>
                         <div class="form-group">
-                            <label for="diastolic">舒張壓 (DIA) mmHg *</label>
-                            <input type="number" id="diastolic" min="30" max="150" placeholder="例如: 75" required>
+                            <label for="diastolic">Diastolic (DIA) mmHg *</label>
+                            <input type="number" id="diastolic" min="30" max="150" placeholder="e.g. 75" required>
                         </div>
                         <div class="form-group">
-                            <label for="pulse">脈搏 (PUL) /分鐘 *</label>
-                            <input type="number" id="pulse" min="40" max="200" placeholder="例如: 74" required>
+                            <label for="pulse">Pulse (PUL) /min *</label>
+                            <input type="number" id="pulse" min="40" max="200" placeholder="e.g. 74" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn">💾 儲存紀錄</button>
+                    <button type="submit" class="btn">💾 Save Record</button>
                 </form>
             </div>
 
-            <!-- 報表生成 -->
+            <!-- Report Generation -->
             <div class="card">
-                <h2>📄 生成醫療報表</h2>
-                <p class="report-hint">💡 選擇日期範圍，生成適合給醫生參考的血壓記錄報表</p>
+                <h2>📄 Generate Medical Report</h2>
+                <p class="report-hint">💡 Select a date range to generate a blood pressure report suitable for sharing with your doctor.</p>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="reportStartDate">開始日期</label>
+                        <label for="reportStartDate">Start Date</label>
                         <input type="date" id="reportStartDate">
                     </div>
                     <div class="form-group">
-                        <label for="reportEndDate">結束日期</label>
+                        <label for="reportEndDate">End Date</label>
                         <input type="date" id="reportEndDate">
                     </div>
                 </div>
                 
                 <div class="report-buttons">
                     <button class="btn report-btn" onclick="generateReport()">
-                        📊 預覽報表
+                        📊 Preview Report
                     </button>
                     <button class="btn btn-secondary report-btn" onclick="downloadReportPDF()">
-                        📄 下載 PDF
+                        📄 Download PDF
                     </button>
                 </div>
 
                 <div id="reportPreview" style="margin-top: 20px;"></div>
             </div>
 
-            <!-- 統計數據 -->
+            <!-- Statistics -->
             <div class="card">
-                <h2>統計數據</h2>
+                <h2>Statistics</h2>
                 <div class="stats-grid" id="statsGrid">
                     <div class="stat-card">
-                        <div class="stat-label">平均收縮壓</div>
+                        <div class="stat-label">Avg Systolic</div>
                         <div class="stat-value" id="avgSystolic">--</div>
                         <div class="stat-label">mmHg</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">平均舒張壓</div>
+                        <div class="stat-label">Avg Diastolic</div>
                         <div class="stat-value" id="avgDiastolic">--</div>
                         <div class="stat-label">mmHg</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">平均脈搏</div>
+                        <div class="stat-label">Avg Pulse</div>
                         <div class="stat-value" id="avgPulse">--</div>
-                        <div class="stat-label">/分鐘</div>
+                        <div class="stat-label">/min</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">總紀錄數</div>
+                        <div class="stat-label">Total Records</div>
                         <div class="stat-value" id="totalRecords">0</div>
-                        <div class="stat-label">筆</div>
+                        <div class="stat-label">entries</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 趨勢圖表 -->
+            <!-- Trend Chart -->
             <div class="card">
-                <h2>血壓趨勢圖（每日平均值）</h2>
-                <p style="color: #666; margin-bottom: 10px;">📊 當天有多筆記錄時，將自動計算平均值顯示在圖表中</p>
+                <h2>Blood Pressure Trend (Daily Average)</h2>
+                <p style="color: #666; margin-bottom: 10px;">📊 When multiple readings exist on the same day, the daily average is plotted on the chart.</p>
                 <div class="chart-container">
                     <canvas id="bpChart"></canvas>
                 </div>
             </div>
 
-            <!-- 紀錄列表 -->
+            <!-- Records List -->
             <div class="card">
-                <h2>歷史紀錄（詳細記錄）</h2>
-                <p style="color: #666; margin-bottom: 10px;">📝 顯示所有量度記錄，包括同一天的多次測量</p>
+                <h2>History (All Readings)</h2>
+                <p style="color: #666; margin-bottom: 10px;">📝 All individual readings, including multiple measurements on the same day.</p>
                 <div id="recordsContainer"></div>
             </div>
         </div>
 
-        <!-- 頁尾 -->
+        <!-- Footer -->
         <footer class="footer">
-            <div class="footer-title">Blood Pressure Tracker - Optimized v2.0</div>
-            <div class="footer-copyright">© 2026 Billion Studio. All rights reserved.</div>
-            <div style="color: #10b981; font-size: 0.9em; margin-top: 5px;">
-                ✅ 優化版本 | PDF 大小 ↓75% | 載入速度 ↑60% | 頻寬消耗 ↓80%
+            <div class="footer-title">Blood Pressure Tracker v2.0</div>
+            <div class="footer-copyright">Copyright © 2026 Billion Studio. All rights reserved.</div>
+            <div style="color: #fff; font-size: 0.9em; margin-top: 5px; opacity: 0.85;">
+                ✅ Optimised | PDF size ↓75% | Load speed ↑60% | Bandwidth ↓80%
             </div>
-            <div class="footer-contact">Contact: <a href="/cdn-cgi/l/email-protection#8eece7e2e2e7e1e0fdfafbeae7e1cee3efe7e2a0ede1e3"><span class="__cf_email__" data-cfemail="54363d38383d3b3a272021303d3b1439353d387a373b39">[email&#160;protected]</span></a></div>
+            <div class="footer-contact">Contact: <a href="mailto:info@billionstudio.com">info@billionstudio.com</a></div>
         </footer>
     </div>
 
-    <!-- 新增人員彈出視窗 -->
+    <!-- Add Person Modal -->
     <div id="addPersonModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeAddPersonModal()">&times;</span>
-            <h2>➕ 新增人員</h2>
+            <h2>➕ Add Person</h2>
             <form id="addPersonForm">
                 <div class="form-group">
-                    <label for="personName">姓名 *</label>
-                    <input type="text" id="personName" required placeholder="請輸入姓名">
+                    <label for="personName">Full Name *</label>
+                    <input type="text" id="personName" required placeholder="Enter name">
                 </div>
                 
                 <div class="form-group">
-                    <label>性別 *</label>
+                    <label>Gender *</label>
                     <div class="gender-options">
                         <div class="gender-option">
                             <input type="radio" id="gender-male" name="personGender" value="男" required>
                             <label for="gender-male" class="gender-label">
-                                👨 男 Male
+                                👨 Male
                             </label>
                         </div>
                         <div class="gender-option">
                             <input type="radio" id="gender-female" name="personGender" value="女" required>
                             <label for="gender-female" class="gender-label">
-                                👩 女 Female
+                                👩 Female
                             </label>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="personBirthdate">出生日期 *</label>
+                    <label for="personBirthdate">Date of Birth *</label>
                     <input type="date" id="personBirthdate" required>
                 </div>
-                <button type="submit" class="btn">✅ 確定新增</button>
+                <button type="submit" class="btn">✅ Add Person</button>
             </form>
         </div>
     </div>
 
-    <!-- 管理人員彈出視窗 -->
+    <!-- Manage People Modal -->
     <div id="managePeopleModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeManagePeopleModal()">&times;</span>
-            <h2>✏️ 管理人員</h2>
+            <h2>✏️ Manage People</h2>
             <div id="peopleList"></div>
         </div>
     </div>
@@ -1448,6 +1461,14 @@
              messagingSenderId: "662293506727",
              appId: "1:662293506727:web:e8aa5980d076ddb5ff0982"
         };
+
+        // ============================================
+        // Disclaimer
+        // ============================================
+        function dismissDisclaimer() {
+            document.getElementById('disclaimerModal').style.display = 'none';
+            sessionStorage.setItem('bp_disclaimer_accepted', '1');
+        }
 
         // 初始化 Firebase
         firebase.initializeApp(firebaseConfig);
@@ -1475,6 +1496,11 @@
                 document.getElementById('app-content').style.display = 'block';
                 document.getElementById('user-email').textContent = user.email;
                 
+                // Show disclaimer once per session
+                if (!sessionStorage.getItem('bp_disclaimer_accepted')) {
+                    document.getElementById('disclaimerModal').style.display = 'block';
+                }
+
                 // 載入用戶數據
                 loadUserData();
             } else {
@@ -1516,18 +1542,18 @@
             const confirmPassword = document.getElementById('register-password-confirm').value;
 
             if (password !== confirmPassword) {
-                showAuthError('兩次輸入的密碼不一致！');
+                showAuthError('Passwords do not match!');
                 return;
             }
 
             if (password.length < 6) {
-                showAuthError('密碼至少需要 6 個字元！');
+                showAuthError('Password must be at least 6 characters!');
                 return;
             }
 
             try {
                 await auth.createUserWithEmailAndPassword(email, password);
-                alert('✅ 註冊成功！歡迎使用血壓紀錄追蹤器');
+                alert('✅ Registration successful! Welcome to Blood Pressure Tracker');
             } catch (error) {
                 console.error('註冊錯誤:', error);
                 showAuthError(getErrorMessage(error.code));
@@ -1551,25 +1577,25 @@
             document.getElementById('show-login-link').style.display = 'none';
         });
 
-        // 登出
+        // Logout
         function logout() {
-            if (confirm('確定要登出嗎？')) {
+            if (confirm('Are you sure you want to logout?')) {
                 auth.signOut();
             }
         }
 
-        // 錯誤訊息翻譯
+        // Error message translation
         function getErrorMessage(errorCode) {
             const messages = {
-                'auth/user-not-found': '此帳號不存在',
-                'auth/wrong-password': '密碼錯誤',
-                'auth/email-already-in-use': '此電子郵件已被註冊',
-                'auth/invalid-email': '電子郵件格式不正確',
-                'auth/weak-password': '密碼強度太弱',
-                'auth/too-many-requests': '嘗試次數過多，請稍後再試',
-                'auth/network-request-failed': '網路連線失敗'
+                'auth/user-not-found': 'Account not found',
+                'auth/wrong-password': 'Incorrect password',
+                'auth/email-already-in-use': 'This email is already registered',
+                'auth/invalid-email': 'Invalid email format',
+                'auth/weak-password': 'Password is too weak',
+                'auth/too-many-requests': 'Too many attempts, please try again later',
+                'auth/network-request-failed': 'Network connection failed'
             };
-            return messages[errorCode] || '發生錯誤，請稍後再試';
+            return messages[errorCode] || 'An error occurred, please try again';
         }
 
         // ============================================
@@ -1601,7 +1627,7 @@
                 }
             } catch (error) {
                 console.error('載入數據錯誤:', error);
-                alert('載入數據時發生錯誤，請重新整理頁面');
+                alert('Failed to load data. Please refresh the page.');
             }
         }
 
@@ -1635,7 +1661,7 @@
             const container = document.getElementById('peopleSelector');
             
             if (people.length === 0) {
-                container.innerHTML = '<p style="color: #999;">請先新增人員資料</p>';
+            container.innerHTML = '<p style="color: #999;">Please add a person to get started.</p>';
                 return;
             }
 
@@ -1648,7 +1674,7 @@
                 html += `
                     <button class="person-btn ${isActive}" onclick="selectPerson('${person.id}')">
                         ${genderIcon} ${person.name}<br>
-                        <small>(${age}歲)</small>
+                        <small>(Age ${age})</small>
                     </button>
                 `;
             });
@@ -1664,7 +1690,7 @@
                     html = `
                         <div class="current-person-info">
                             <h3>${genderIcon} ${currentPerson.name}</h3>
-                            <p>性別: ${currentPerson.gender} ${genderText} | 出生日期: ${currentPerson.birthdate} (${age}歲)</p>
+                            <p>Gender: ${currentPerson.gender === '男' ? 'Male' : 'Female'} | DOB: ${currentPerson.birthdate} (Age: ${age})</p>
                         </div>
                     ` + html;
                 }
@@ -1713,7 +1739,7 @@
             const container = document.getElementById('peopleList');
             
             if (people.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center;">目前沒有人員資料</p>';
+            container.innerHTML = '<p style="color: #999; text-align: center;">No people added yet.</p>';
                 return;
             }
 
@@ -1732,16 +1758,16 @@
                         <div class="person-info">
                             <div class="person-name">${genderIcon} ${person.name}</div>
                             <div class="person-details">
-                                <span class="person-gender ${genderClass}">${person.gender} ${genderText}</span>
-                                出生日期: ${person.birthdate} 
-                                <span class="person-age">(${age}歲)</span>
+                                <span class="person-gender ${genderClass}">${genderText}</span>
+                                DOB: ${person.birthdate} 
+                                <span class="person-age">(Age ${age})</span>
                             </div>
                             <div style="color: #666; font-size: 0.85em; margin-top: 5px;">
-                                📊 共有 ${recordCount} 筆記錄
+                                📊 ${recordCount} records
                             </div>
                         </div>
                         <button class="delete-btn" onclick="deletePerson('${person.id}', '${person.name}', ${recordCount})">
-                            🗑️ 刪除
+                            🗑️ Delete
                         </button>
                     </div>
                 `;
@@ -1777,17 +1803,17 @@
                 closeAddPersonModal();
                 displayPeopleSelector();
 
-                alert(`✅ 已成功新增人員：${personData.name}`);
+                alert(`✅ Person added: ${personData.name}`);
             } catch (error) {
                 console.error('新增人員錯誤:', error);
-                alert('新增人員時發生錯誤，請稍後再試');
+                alert('Failed to add person. Please try again.');
             }
         });
 
         async function deletePerson(personId, personName, recordCount) {
             const message = recordCount > 0 
-                ? `確定要刪除 ${personName} 嗎？\n⚠️ 這將同時刪除該人員的 ${recordCount} 筆血壓記錄！`
-                : `確定要刪除 ${personName} 嗎？`;
+                ? `Delete ${personName}? This will also delete their ${recordCount} blood pressure record(s).`
+                : `Delete ${personName}?`;
 
             if (confirm(message)) {
                 try {
@@ -1819,10 +1845,10 @@
                     updateStats();
                     updateChart();
 
-                    alert(`✅ 已刪除 ${personName} 及其相關記錄`);
+                    alert(`✅ Deleted ${personName} and their records.`);
                 } catch (error) {
                     console.error('刪除人員錯誤:', error);
-                    alert('刪除人員時發生錯誤，請稍後再試');
+                    alert('Failed to delete person. Please try again.');
                 }
             }
         }
@@ -1848,7 +1874,7 @@
             e.preventDefault();
 
             if (!currentPersonId) {
-                alert('⚠️ 請先選擇或新增人員！');
+                alert('⚠️ Please select or add a person first!');
                 showAddPersonModal();
                 return;
             }
@@ -1888,10 +1914,10 @@
                 ).length;
                 
                 const person = people.find(p => p.id === currentPersonId);
-                alert(`✅ 已為 ${person.name} 儲存紀錄！\n📅 ${recordData.recordDate} 已有 ${todayCount} 筆記錄`);
+                alert(`✅ Record saved for ${person.name}!\n📅 ${recordData.recordDate} now has ${todayCount} reading(s)`);
             } catch (error) {
                 console.error('儲存記錄錯誤:', error);
-                alert('儲存記錄時發生錯誤，請稍後再試');
+                alert('Failed to save record. Please try again.');
             }
         });
 
@@ -1910,11 +1936,11 @@
             }
 
             if (systolic <= standard.sys && diastolic <= standard.dia) {
-                return { text: '正常', class: 'status-normal' };
+                return { text: 'Normal', class: 'status-normal' };
             } else if (systolic <= standard.sys + 10 && diastolic <= standard.dia + 10) {
-                return { text: '偏高', class: 'status-elevated' };
+                return { text: 'Elevated', class: 'status-elevated' };
             } else {
-                return { text: '高血壓', class: 'status-high' };
+                return { text: 'High', class: 'status-high' };
             }
         }
 
@@ -1922,14 +1948,14 @@
             const container = document.getElementById('recordsContainer');
 
             if (!currentPersonId) {
-                container.innerHTML = '<div class="empty-state"><p>請先選擇人員</p></div>';
+                container.innerHTML = '<div class="empty-state"><p>Please select a person.</p></div>';
                 return;
             }
 
             const personRecords = records.filter(r => r.personId === currentPersonId);
 
             if (personRecords.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p>目前沒有紀錄，請新增第一筆血壓數據</p></div>';
+            container.innerHTML = '<div class="empty-state"><p>No records yet. Add your first reading above.</p></div>';
                 return;
             }
 
@@ -1942,13 +1968,13 @@
                     <table class="records-table">
                         <thead>
                             <tr>
-                                <th>日期</th>
-                                <th>時間</th>
-                                <th>收縮壓</th>
-                                <th>舒張壓</th>
-                                <th>脈搏</th>
-                                <th>狀態</th>
-                                <th>操作</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Systolic</th>
+                                <th>Diastolic</th>
+                                <th>Pulse</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1962,9 +1988,9 @@
                         <td>${record.recordTime}</td>
                         <td>${record.systolic} mmHg</td>
                         <td>${record.diastolic} mmHg</td>
-                        <td>${record.pulse} /分</td>
+                        <td>${record.pulse} /min</td>
                         <td><span class="status-indicator ${status.class}">${status.text}</span></td>
-                        <td><button class="delete-btn" onclick="deleteRecord('${record.id}')">刪除</button></td>
+                        <td><button class="delete-btn" onclick="deleteRecord('${record.id}')">Delete</button></td>
                     </tr>
                 `;
             });
@@ -1974,7 +2000,7 @@
         }
 
         async function deleteRecord(recordId) {
-            if (confirm('確定要刪除這筆紀錄嗎？')) {
+            if (confirm('Delete this record?')) {
                 try {
                     await db.collection('records').doc(recordId).delete();
                     records = records.filter(r => r.id !== recordId);
@@ -1983,7 +2009,7 @@
                     updateChart();
                 } catch (error) {
                     console.error('刪除記錄錯誤:', error);
-                    alert('刪除記錄時發生錯誤，請稍後再試');
+                    alert('Failed to delete record. Please try again.');
                 }
             }
         }
@@ -2084,7 +2110,7 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: '收縮壓 (SYS) 平均',
+                            label: 'Systolic (SYS) Avg',
                             data: systolicData,
                             borderColor: '#ef4444',
                             backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -2092,7 +2118,7 @@
                             fill: true
                         },
                         {
-                            label: '舒張壓 (DIA) 平均',
+                            label: 'Diastolic (DIA) Avg',
                             data: diastolicData,
                             borderColor: '#3b82f6',
                             backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -2100,7 +2126,7 @@
                             fill: true
                         },
                         {
-                            label: '脈搏 (PUL) 平均',
+                            label: 'Pulse (PUL) Avg',
                             data: pulseData,
                             borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -2123,7 +2149,7 @@
                             callbacks: {
                                 afterLabel: function(context) {
                                     const index = context.dataIndex;
-                                    return `當日量度次數: ${dailyData[index].count}次`;
+                                    return `Readings that day: ${dailyData[index].count}`;
                                 }
                             }
                         }
@@ -2133,7 +2159,7 @@
                             beginAtZero: false,
                             title: {
                                 display: true,
-                                text: '數值 (mmHg / bpm)'
+                                text: 'Value (mmHg / bpm)'
                             }
                         },
                         x: {
@@ -2146,7 +2172,7 @@
                             },
                             title: {
                                 display: true,
-                                text: '日期 (量度次數)'
+                                text: 'Date (readings)'
                             }
                         }
                     }
@@ -2160,7 +2186,7 @@
 
         function generateReport() {
             if (!currentPersonId) {
-                alert('⚠️ 請先選擇人員！');
+                alert('⚠️ Please select a person first!');
                 return;
             }
 
@@ -2168,12 +2194,12 @@
             const endDate = document.getElementById('reportEndDate').value;
 
             if (!startDate || !endDate) {
-                alert('⚠️ 請選擇開始和結束日期！');
+                alert('⚠️ Please select start and end dates!');
                 return;
             }
 
             if (new Date(startDate) > new Date(endDate)) {
-                alert('⚠️ 開始日期不能晚於結束日期！');
+                alert('⚠️ Start date cannot be after end date!');
                 return;
             }
 
@@ -2190,7 +2216,7 @@
             });
 
             if (filteredRecords.length === 0) {
-                alert('📭 選擇的日期範圍內沒有記錄！');
+                alert('📭 No records found in the selected date range!');
                 return;
             }
 
@@ -2209,53 +2235,51 @@
             const genderIcon = gender === '男' ? '👨' : '👩';
             const genderText = gender === '男' ? 'Male' : 'Female';
 
-            // 生成報表 HTML
             let reportHTML = `
                 <div class="report-preview" id="printableReport">
                     <div class="report-header">
-                        <h2>🩺 血壓監測報告</h2>
-                        <p style="color: #666;">Blood Pressure Monitoring Report</p>
+                        <h2>🩺 Blood Pressure Monitoring Report</h2>
                     </div>
 
                     <div class="report-info">
-                        <div><strong>姓名 Name:</strong> ${person.name}</div>
-                        <div><strong>性別 Gender:</strong> ${genderIcon} ${gender} ${genderText}</div>
-                        <div><strong>出生日期 DOB:</strong> ${person.birthdate} (${age}歲)</div>
-                        <div><strong>報告日期 Report Date:</strong> ${new Date().toLocaleDateString('zh-TW')}</div>
-                        <div style="grid-column: 1 / -1;"><strong>記錄期間 Period:</strong> ${startDate} 至 ${endDate}</div>
+                        <div><strong>Name:</strong> ${person.name}</div>
+                        <div><strong>Gender:</strong> ${genderIcon} ${genderText}</div>
+                        <div><strong>DOB:</strong> ${person.birthdate} (Age: ${age})</div>
+                        <div><strong>Report Date:</strong> ${new Date().toLocaleDateString('en-GB')}</div>
+                        <div style="grid-column: 1 / -1;"><strong>Period:</strong> ${startDate} to ${endDate}</div>
                     </div>
 
                     <div class="report-summary">
-                        <h3>📊 統計摘要 Summary</h3>
+                        <h3>📊 Summary Statistics</h3>
                         <div class="report-summary-grid">
                             <div class="report-summary-item">
                                 <div class="report-summary-value">${avgSystolic}</div>
-                                <div class="report-summary-label">平均收縮壓<br>Avg Systolic (mmHg)</div>
+                                <div class="report-summary-label">Avg Systolic (mmHg)</div>
                             </div>
                             <div class="report-summary-item">
                                 <div class="report-summary-value">${avgDiastolic}</div>
-                                <div class="report-summary-label">平均舒張壓<br>Avg Diastolic (mmHg)</div>
+                                <div class="report-summary-label">Avg Diastolic (mmHg)</div>
                             </div>
                             <div class="report-summary-item">
                                 <div class="report-summary-value">${avgPulse}</div>
-                                <div class="report-summary-label">平均脈搏<br>Avg Pulse (bpm)</div>
+                                <div class="report-summary-label">Avg Pulse (bpm)</div>
                             </div>
                             <div class="report-summary-item">
                                 <div class="report-summary-value">${filteredRecords.length}</div>
-                                <div class="report-summary-label">總記錄數<br>Total Records</div>
+                                <div class="report-summary-label">Total Records</div>
                             </div>
                             <div class="report-summary-item">
                                 <div class="report-summary-value">${maxSystolic}/${maxDiastolic}</div>
-                                <div class="report-summary-label">最高血壓<br>Max BP</div>
+                                <div class="report-summary-label">Max BP</div>
                             </div>
                             <div class="report-summary-item">
                                 <div class="report-summary-value">${minSystolic}/${minDiastolic}</div>
-                                <div class="report-summary-label">最低血壓<br>Min BP</div>
+                                <div class="report-summary-label">Min BP</div>
                             </div>
                         </div>
                     </div>
 
-                    <h3 style="color: #ff6b6b; margin-top: 30px; margin-bottom: 15px;">📋 詳細記錄 Detailed Records</h3>
+                    <h3 style="color: #ff6b6b; margin-top: 30px; margin-bottom: 15px;">📋 Detailed Records</h3>
             `;
 
             // 🔧 優化：將記錄分成多個小表格，每個表格最多 20 筆記錄
@@ -2277,12 +2301,12 @@
                     <table class="report-table" style="margin-top: ${tableIndex > 0 ? '20px' : '0'};">
                         <thead>
                             <tr>
-                                <th>日期<br>Date</th>
-                                <th>時間<br>Time</th>
-                                <th>收縮壓<br>Systolic (mmHg)</th>
-                                <th>舒張壓<br>Diastolic (mmHg)</th>
-                                <th>脈搏<br>Pulse (bpm)</th>
-                                <th>狀態<br>Status</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Systolic (mmHg)</th>
+                                <th>Diastolic (mmHg)</th>
+                                <th>Pulse (bpm)</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -2310,11 +2334,10 @@
 
             reportHTML += `
                     <div class="report-footer">
-                        <p><strong>備註 Notes:</strong></p>
-                        <p>血壓評估標準已根據性別（${gender}）和年齡（${age}歲）調整</p>
-                        <p>Blood pressure assessment adjusted for gender (${genderText}) and age (${age} years)</p>
-                        <p style="margin-top: 20px;">本報告由血壓追蹤系統自動生成，僅供醫療參考</p>
-                        <p>This report is automatically generated for medical reference only</p>
+                        <p><strong>Notes:</strong></p>
+                        <p>Blood pressure assessment adjusted for gender (${genderText}) and age (${age} years).</p>
+                        <p>This report is automatically generated for medical reference only.</p>
+                        <p style="margin-top: 10px;">Copyright © 2026 Billion Studio. All rights reserved.</p>
                     </div>
                 </div>
             `;
@@ -2327,18 +2350,18 @@
 
         async function downloadReportPDF() {
             if (!currentPersonId) {
-                alert('⚠️ 請先選擇人員！');
+                alert('⚠️ Please select a person first!');
                 return;
             }
 
             // 顯示載入訊息
             const originalButton = event.target;
             const originalText = originalButton.innerHTML;
-            originalButton.innerHTML = '⏳ 生成中...';
+            originalButton.innerHTML = '⏳ Generating...';
             originalButton.disabled = true;
 
             try {
-                console.log('🚀 開始生成 PDF（使用 autoTable + 中文支援）...');
+                console.log('🚀 Generating PDF (autoTable)...');
                 
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
@@ -2390,11 +2413,11 @@
                 pdf.setFontSize(11);
                 pdf.text(`Name: ${person.name}`, margin, yPosition);
                 pdf.text(`Gender: ${genderIcon} ${genderText}`, margin + 80, yPosition);
-                pdf.text(`Report Date: ${new Date().toLocaleDateString()}`, margin + 140, yPosition);
+                pdf.text(`Report Date: ${new Date().toLocaleDateString('en-GB')}`, margin + 140, yPosition);
                 
                 yPosition += 7;
                 pdf.text(`DOB: ${person.birthdate} (Age: ${age})`, margin, yPosition);
-                pdf.text(`Period: ${startDate} - ${endDate}`, margin + 80, yPosition);
+                pdf.text(`Period: ${startDate} to ${endDate}`, margin + 80, yPosition);
 
                 yPosition += 12;
                 
@@ -2470,10 +2493,10 @@
                     didParseCell: function(data) {
                         if (data.section === 'body' && data.column.index === 5) {
                             const status = data.cell.text[0];
-                            if (status.includes('Normal') || status === '正常') {
+                            if (status === 'Normal') {
                                 data.cell.styles.textColor = [16, 185, 129];
                                 data.cell.styles.fontStyle = 'bold';
-                            } else if (status.includes('Warning') || status === '警告') {
+                            } else if (status === 'Elevated') {
                                 data.cell.styles.textColor = [251, 191, 36];
                                 data.cell.styles.fontStyle = 'bold';
                             } else {
@@ -2489,8 +2512,9 @@
                 pdf.setFontSize(8);
                 pdf.setTextColor(102, 102, 102);
                 pdf.text('Notes:', margin, finalY + 10);
-                pdf.text(`Blood pressure assessment adjusted for gender (${genderText}) and age (${age} years)`, margin, finalY + 15);
-                pdf.text('This report is automatically generated for medical reference only', margin, finalY + 20);
+                pdf.text(`Blood pressure assessment adjusted for gender (${genderText}) and age (${age} years).`, margin, finalY + 15);
+                pdf.text('This report is automatically generated for medical reference only.', margin, finalY + 20);
+                pdf.text('Copyright \u00A9 2026 Billion Studio. All rights reserved.', margin, finalY + 25);
 
                 // 生成檔案名稱
                 const today = new Date();
@@ -2500,12 +2524,12 @@
                 // 下載 PDF
                 pdf.save(filename);
                 
-                console.log('✅ PDF 已生成！（autoTable 版本）');
-                alert('✅ PDF 已成功下載！\n\n📊 特色：\n• 每頁自動添加表頭\n• 專業表格排版\n• 檔案小且清晰');
+                console.log('✅ PDF generated successfully (autoTable)!');
+                alert('✅ PDF downloaded successfully!\n\n📊 Features:\n• Table header repeated on every page\n• Professional layout\n• Compact file size');
                 
             } catch (error) {
                 console.error('PDF 生成失敗:', error);
-                alert('❌ PDF 生成失敗: ' + error.message);
+                alert('❌ PDF generation failed: ' + error.message);
             } finally {
                 // 恢復按鈕狀態
                 originalButton.innerHTML = originalText;
